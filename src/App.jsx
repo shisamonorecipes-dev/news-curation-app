@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, ExternalLink, Clock, Flame, ListMusic, Loader2 } from 'lucide-react';
+import { Play, Pause, ExternalLink, Clock, Flame, ListMusic, Loader2, ArrowLeft, History } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import './index.css';
 
@@ -11,11 +11,11 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 function App() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const [playingId, setPlayingId] = useState(null); // 'all' or article.id
+  const [playingId, setPlayingId] = useState(null);
   const [activeCategory, setActiveCategory] = useState('ゲーム業界');
   const [speechSynthesis, setSpeechSynthesis] = useState(null);
   const [playbackRate, setPlaybackRate] = useState(1.0);
+  const [viewMode, setViewMode] = useState('latest'); // 'latest' | 'archive'
 
   const categories = ['ゲーム業界', 'eスポーツ', 'インディー', '金融市場'];
 
@@ -32,20 +32,19 @@ function App() {
   useEffect(() => {
     async function fetchTrends() {
       setLoading(true);
+      setViewMode('latest'); // カテゴリ切り替え時は最新に戻す
       
       const { data, error } = await supabase
         .from('trends')
         .select('*')
         .eq('category', activeCategory)
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(30); // 過去分も含めて多めに取得
 
       if (error) {
         console.error("データの取得に失敗しました:", error);
       } else {
-        // 同じバッチで作成されたものをスコア順に並び替え
-        const sortedData = (data || []).sort((a, b) => b.score - a.score);
-        setArticles(sortedData);
+        setArticles(data || []);
       }
       setLoading(false);
     }
@@ -53,7 +52,6 @@ function App() {
     fetchTrends();
   }, [activeCategory]);
 
-  // 相対時間を計算する関数（例: "2時間前"）
   const getRelativeTime = (timestamp) => {
     if (!timestamp) return '不明';
     const rtf = new Intl.RelativeTimeFormat('ja', { numeric: 'auto' });
@@ -71,7 +69,6 @@ function App() {
     }
   };
 
-  // 個別記事の再生・停止
   const togglePlay = (id, text) => {
     if (!speechSynthesis) return;
 
@@ -89,8 +86,7 @@ function App() {
     }
   };
 
-  // 全記事の連続再生・停止
-  const togglePlayAll = () => {
+  const togglePlayAll = (targetArticles) => {
     if (!speechSynthesis) return;
 
     if (playingId === 'all') {
@@ -100,13 +96,13 @@ function App() {
       speechSynthesis.cancel();
       setPlayingId('all');
 
-      articles.forEach((article, index) => {
+      targetArticles.forEach((article, index) => {
         const text = `${article.title}。${article.summary}`;
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'ja-JP';
         utterance.rate = playbackRate;
         
-        if (index === articles.length - 1) {
+        if (index === targetArticles.length - 1) {
           utterance.onend = () => setPlayingId(null);
         }
         
@@ -114,6 +110,65 @@ function App() {
       });
     }
   };
+
+  const renderArticle = (article) => (
+    <article key={article.id} className="article-card glass-panel">
+      <div className="card-header">
+        <div className="meta">
+          <div className="meta-item">
+            <Clock size={14} />
+            <span>{getRelativeTime(article.created_at)}</span>
+          </div>
+          <span className="source-badge">{article.source_count}サイトで話題</span>
+        </div>
+        <div className="score">
+          <Flame size={14} /> {article.score}
+        </div>
+      </div>
+
+      <h3 className="article-title">{article.title}</h3>
+      
+      <div className="reference-links">
+        <span className="ref-label">参考元:</span>
+        {Array.isArray(article.links) && article.links.map((link, i) => (
+          <a key={i} href={link.url} className="ref-link" target="_blank" rel="noopener noreferrer">
+            <ExternalLink size={12} /> {link.name}
+          </a>
+        ))}
+      </div>
+
+      <p className="article-summary">{article.summary}</p>
+
+      <div className="card-actions">
+        <div className="play-controls">
+          <button 
+            className={`play-btn ${playingId === article.id ? 'playing' : ''}`}
+            onClick={() => togglePlay(article.id, article.summary)}
+          >
+            {playingId === article.id ? <Pause size={18} /> : <Play size={18} />}
+            <span>{playingId === article.id ? '停止' : '読み上げ'}</span>
+          </button>
+          
+          <select 
+            className="rate-select small" 
+            value={playbackRate} 
+            onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
+            title="再生速度"
+          >
+            <option value={1.0}>1.0x</option>
+            <option value={1.25}>1.25x</option>
+            <option value={1.5}>1.5x</option>
+            <option value={2.0}>2.0x</option>
+          </select>
+        </div>
+      </div>
+    </article>
+  );
+
+  // 記事の分類（直近1回分=5件を「最新」、それ以降を「過去」）
+  const latestArticles = articles.slice(0, 5).sort((a, b) => b.score - a.score);
+  const pastArticles = articles.slice(5);
+  const pastPreview = pastArticles.slice(0, 5); // プレビュー用5件
 
   return (
     <div className="app-container">
@@ -135,102 +190,111 @@ function App() {
       </nav>
 
       <main>
-        <section className="trending-section">
-          <div className="section-header">
-            <Flame className="icon-flame" />
-            <h2>Trending Now</h2>
-            <div className="controls-right">
-              <button 
-                className={`play-all-btn ${playingId === 'all' ? 'playing' : ''}`}
-                onClick={togglePlayAll}
-                disabled={loading || articles.length === 0}
-              >
-                {playingId === 'all' ? <Pause size={16} /> : <ListMusic size={16} />}
-                <span>{playingId === 'all' ? '全停止' : 'すべて再生'}</span>
-              </button>
-              
-              <select 
-                className="rate-select" 
-                value={playbackRate} 
-                onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
-                title="全体の再生速度"
-              >
-                <option value={1.0}>速度 1.0x</option>
-                <option value={1.25}>速度 1.25x</option>
-                <option value={1.5}>速度 1.5x</option>
-                <option value={2.0}>速度 2.0x</option>
-              </select>
-            </div>
+        {loading ? (
+          <div className="loading-state" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+            <Loader2 className="animate-spin" size={32} style={{ margin: '0 auto 1rem' }} />
+            <p>最新のトレンドを取得中...</p>
           </div>
-
-          <div className="articles-grid">
-            {loading ? (
-              <div className="loading-state" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                <Loader2 className="animate-spin" size={32} style={{ margin: '0 auto 1rem' }} />
-                <p>最新のトレンドを取得中...</p>
+        ) : articles.length === 0 ? (
+          <div className="empty-state" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+            <p>このカテゴリのニュースはまだ取得されていません。</p>
+          </div>
+        ) : viewMode === 'latest' ? (
+          // === 最新モードの表示 ===
+          <div className="view-latest">
+            <section className="trending-section">
+              <div className="section-header">
+                <Flame className="icon-flame" />
+                <h2>Trending Now</h2>
+                <div className="controls-right">
+                  <button 
+                    className={`play-all-btn ${playingId === 'all' ? 'playing' : ''}`}
+                    onClick={() => togglePlayAll(latestArticles)}
+                  >
+                    {playingId === 'all' ? <Pause size={16} /> : <ListMusic size={16} />}
+                    <span>{playingId === 'all' ? '全停止' : 'すべて再生'}</span>
+                  </button>
+                </div>
               </div>
-            ) : articles.length === 0 ? (
-              <div className="empty-state" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                <p>このカテゴリのニュースはまだ取得されていません。</p>
+              <div className="articles-grid">
+                {latestArticles.map(renderArticle)}
               </div>
-            ) : (
-              articles.map(article => (
-                <article key={article.id} className="article-card glass-panel">
-                  <div className="card-header">
-                    <div className="meta">
-                      <div className="meta-item">
-                        <Clock size={14} />
-                        <span>{getRelativeTime(article.created_at)}</span>
-                      </div>
-                      <span className="source-badge">{article.source_count}サイトで話題</span>
-                    </div>
-                    <div className="score">
-                      <Flame size={14} /> {article.score}
-                    </div>
-                  </div>
+            </section>
 
-                  <h3 className="article-title">{article.title}</h3>
-                  
-                  {/* 参考URLのリスト */}
-                  <div className="reference-links">
-                    <span className="ref-label">参考元:</span>
-                    {Array.isArray(article.links) && article.links.map((link, i) => (
-                      <a key={i} href={link.url} className="ref-link" target="_blank" rel="noopener noreferrer">
-                        <ExternalLink size={12} /> {link.name}
-                      </a>
-                    ))}
+            {pastPreview.length > 0 && (
+              <section className="past-section" style={{ marginTop: '4rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '2.5rem' }}>
+                <div className="section-header" style={{ marginBottom: '1.5rem', opacity: 0.8 }}>
+                  <History className="icon-history" style={{ color: 'var(--text-muted)', marginRight: '8px' }} size={20} />
+                  <h2 style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>Previous Trends</h2>
+                </div>
+                <div className="articles-grid past-grid" style={{ opacity: 0.8 }}>
+                  {pastPreview.map(renderArticle)}
+                </div>
+                
+                {pastArticles.length > 5 && (
+                  <div className="archive-link-container" style={{ textAlign: 'center', marginTop: '3rem', marginBottom: '3rem' }}>
+                    <button 
+                      className="archive-button" 
+                      onClick={() => {
+                        setViewMode('archive');
+                        window.scrollTo(0, 0);
+                      }}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        padding: '14px 32px',
+                        borderRadius: '30px',
+                        color: 'var(--text-secondary)',
+                        fontSize: '1rem',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+                      }}
+                      onMouseOver={(e) => { 
+                        e.currentTarget.style.background = 'var(--primary)'; 
+                        e.currentTarget.style.color = '#fff'; 
+                        e.currentTarget.style.borderColor = 'var(--primary)';
+                      }}
+                      onMouseOut={(e) => { 
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'; 
+                        e.currentTarget.style.color = 'var(--text-secondary)'; 
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                      }}
+                    >
+                      さらに過去の記事を見る
+                    </button>
                   </div>
-
-                  <p className="article-summary">{article.summary}</p>
-
-                  <div className="card-actions">
-                    <div className="play-controls">
-                      <button 
-                        className={`play-btn ${playingId === article.id ? 'playing' : ''}`}
-                        onClick={() => togglePlay(article.id, article.summary)}
-                      >
-                        {playingId === article.id ? <Pause size={18} /> : <Play size={18} />}
-                        <span>{playingId === article.id ? '停止' : '読み上げ'}</span>
-                      </button>
-                      
-                      <select 
-                        className="rate-select small" 
-                        value={playbackRate} 
-                        onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
-                        title="再生速度"
-                      >
-                        <option value={1.0}>1.0x</option>
-                        <option value={1.25}>1.25x</option>
-                        <option value={1.5}>1.5x</option>
-                        <option value={2.0}>2.0x</option>
-                      </select>
-                    </div>
-                  </div>
-                </article>
-              ))
+                )}
+              </section>
             )}
           </div>
-        </section>
+        ) : (
+          // === アーカイブモードの表示 ===
+          <div className="view-archive">
+            <div className="archive-header" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <button 
+                className="back-button"
+                onClick={() => setViewMode('latest')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
+                  color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.9rem',
+                  padding: '8px 16px', borderRadius: '20px', transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+              >
+                <ArrowLeft size={16} /> 戻る
+              </button>
+              <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>Archive - すべての過去記事</h2>
+            </div>
+            
+            <div className="articles-grid">
+              {pastArticles.map(renderArticle)}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

@@ -29,17 +29,41 @@ export default async function handler(request, response) {
     const targetCategory = "ゲーム業界";
     const FEEDS = CATEGORY_FEEDS[targetCategory];
 
+    // 直近2日間のトレンドから保存済みURLを取得
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 2);
+    const { data: existingTrends } = await supabase
+      .from('trends')
+      .select('links')
+      .eq('category', targetCategory)
+      .gte('created_at', yesterday.toISOString());
+    
+    const existingUrls = new Set();
+    if (existingTrends) {
+      existingTrends.forEach(trend => {
+        if (Array.isArray(trend.links)) {
+          trend.links.forEach(link => existingUrls.add(link.url));
+        }
+      });
+    }
+
     const articles = [];
     for (const feed of FEEDS) {
       try {
         const data = await parser.parseURL(feed.url);
         const recentItems = data.items.slice(0, 15);
         recentItems.forEach(item => {
-          articles.push({ source: feed.name, title: item.title, link: item.link });
+          if (!existingUrls.has(item.link)) {
+            articles.push({ source: feed.name, title: item.title, link: item.link });
+          }
         });
       } catch (err) {
         console.error(`Fetch error for ${feed.name}:`, err.message);
       }
+    }
+
+    if (articles.length === 0) {
+      return response.status(200).json({ success: true, message: 'No new articles to summarize.' });
     }
 
     const prompt = `

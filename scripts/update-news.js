@@ -32,6 +32,24 @@ async function main(targetCategory = "ゲーム業界") {
   const FEEDS = CATEGORY_FEEDS[targetCategory];
   if (!FEEDS) return console.error(`❌ カテゴリ「${targetCategory}」が見つかりません。`);
 
+  // 直近2日間のトレンドから保存済みURLを取得
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 2);
+  const { data: existingTrends } = await supabase
+    .from('trends')
+    .select('links')
+    .eq('category', targetCategory)
+    .gte('created_at', yesterday.toISOString());
+  
+  const existingUrls = new Set();
+  if (existingTrends) {
+    existingTrends.forEach(trend => {
+      if (Array.isArray(trend.links)) {
+        trend.links.forEach(link => existingUrls.add(link.url));
+      }
+    });
+  }
+
   // 1. RSSから記事取得
   console.log('🔄 1. ニュース記事を取得中...');
   const articles = [];
@@ -40,14 +58,21 @@ async function main(targetCategory = "ゲーム業界") {
       const data = await parser.parseURL(feed.url);
       const recentItems = data.items.slice(0, 15);
       recentItems.forEach(item => {
-        articles.push({ source: feed.name, title: item.title, link: item.link });
+        if (!existingUrls.has(item.link)) {
+          articles.push({ source: feed.name, title: item.title, link: item.link });
+        }
       });
     } catch (error) {
       console.error(`❌ ${feed.name} 取得エラー:`, error.message);
     }
   }
 
-  console.log(`✅ 計 ${articles.length} 件の記事を取得しました。`);
+  console.log(`✅ 計 ${articles.length} 件の新しい記事を取得しました（重複を除外済み）。`);
+
+  if (articles.length === 0) {
+    console.log('✨ 新しいニュースはありませんでした。終了します。');
+    return;
+  }
 
   // 2. Geminiによる要約とスコアリング
   console.log('🔄 2. AI(Gemini)に分析・要約を依頼中...');
