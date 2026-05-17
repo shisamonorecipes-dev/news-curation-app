@@ -1,0 +1,17 @@
+name: Update News Automatically
+
+on:
+  schedule:
+    # 毎日 日本時間の 6:00, 12:00, 18:00, 0:00 (UTC: 21:00, 03:00, 09:00, 15:00)
+    - cron: '0 21,3,9,15 * * *'
+  workflow_dispatch: # 手動で画面から実行するための設定
+
+jobs:
+  trigger-vercel-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Update News API
+        run: |
+          curl -X GET "https://curation.shisamonorecipes.com/api/update-news" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          --fail
