@@ -15,8 +15,10 @@ function App() {
   const [activeCategory, setActiveCategory] = useState('ゲーム業界');
   const [speechSynthesis, setSpeechSynthesis] = useState(null);
   const [playbackRate, setPlaybackRate] = useState(1.0);
-  const [viewMode, setViewMode] = useState('latest'); // 'latest' | 'archive_list' | 'archive_detail'
-  const [selectedArchiveKey, setSelectedArchiveKey] = useState(null);
+  const [viewMode, setViewMode] = useState('latest'); // 'latest' | 'archive_months' | 'archive_days' | 'archive_times' | 'archive_detail'
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
 
   const categories = ['ゲーム業界', 'eスポーツ', 'インディー', '金融市場'];
 
@@ -40,7 +42,7 @@ function App() {
         .select('*')
         .eq('category', activeCategory)
         .order('created_at', { ascending: false })
-        .limit(100); // アーカイブ一覧用に100件まで取得
+        .limit(1000); // アーカイブ階層化のため1000件取得
 
       if (error) {
         console.error("データの取得に失敗しました:", error);
@@ -170,24 +172,21 @@ function App() {
   const latestArticles = articles.slice(0, 5).sort((a, b) => b.score - a.score);
   const pastArticles = articles.slice(5);
 
-  const formatArchiveDate = (timestamp) => {
-    const d = new Date(timestamp);
-    const year = d.getFullYear();
-    const month = d.getMonth() + 1;
-    const date = d.getDate();
-    const hours = d.getHours();
-    return `${year}年${month}月${date}日 ${hours}時の記事`;
-  };
-
-  const archiveGroups = [];
+  const archiveTree = {};
   pastArticles.forEach(article => {
-    const key = formatArchiveDate(article.created_at);
-    const existingGroup = archiveGroups.find(g => g.key === key);
-    if (existingGroup) {
-      existingGroup.articles.push(article);
-    } else {
-      archiveGroups.push({ key, articles: [article] });
-    }
+    const d = new Date(article.created_at);
+    const yearMonth = `${d.getFullYear()}年${d.getMonth() + 1}月`;
+    const monthDay = `${d.getMonth() + 1}月${d.getDate()}日`;
+    const timeLabel = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${d.getHours()}時`;
+
+    if (!archiveTree[yearMonth]) archiveTree[yearMonth] = { count: 0, days: {} };
+    archiveTree[yearMonth].count++;
+
+    if (!archiveTree[yearMonth].days[monthDay]) archiveTree[yearMonth].days[monthDay] = { count: 0, times: {} };
+    archiveTree[yearMonth].days[monthDay].count++;
+
+    if (!archiveTree[yearMonth].days[monthDay].times[timeLabel]) archiveTree[yearMonth].days[monthDay].times[timeLabel] = [];
+    archiveTree[yearMonth].days[monthDay].times[timeLabel].push(article);
   });
 
   return (
@@ -241,12 +240,12 @@ function App() {
               </div>
             </section>
 
-            {archiveGroups.length > 0 && (
+            {Object.keys(archiveTree).length > 0 && (
               <div className="archive-link-container" style={{ textAlign: 'center', marginTop: '4rem', marginBottom: '3rem' }}>
                 <button 
                   className="archive-button" 
                   onClick={() => {
-                    setViewMode('archive_list');
+                    setViewMode('archive_months');
                     window.scrollTo(0, 0);
                   }}
                   style={{
@@ -277,8 +276,8 @@ function App() {
               </div>
             )}
           </div>
-        ) : viewMode === 'archive_list' ? (
-          // === アーカイブリストモードの表示 ===
+        ) : viewMode === 'archive_months' ? (
+          // === アーカイブ 月一覧 ===
           <div className="view-archive-list">
             <div className="archive-header" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <button 
@@ -299,15 +298,15 @@ function App() {
             </div>
             
             <div className="archive-links-container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '600px', margin: '0 auto', marginBottom: '4rem' }}>
-              {archiveGroups.length === 0 ? (
+              {Object.keys(archiveTree).length === 0 ? (
                  <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>過去のアーカイブはまだありません。</p>
               ) : (
-                archiveGroups.map(group => (
+                Object.keys(archiveTree).map(month => (
                   <button
-                    key={group.key}
+                    key={month}
                     onClick={() => {
-                      setSelectedArchiveKey(group.key);
-                      setViewMode('archive_detail');
+                      setSelectedMonth(month);
+                      setViewMode('archive_days');
                       window.scrollTo(0, 0);
                     }}
                     style={{
@@ -319,20 +318,20 @@ function App() {
                     onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                     onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.transform = 'translateY(0)'; }}
                   >
-                    <span>{group.key}</span>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '12px' }}>{group.articles.length}件</span>
+                    <span>{month}の記事</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '12px' }}>{archiveTree[month].count}件</span>
                   </button>
                 ))
               )}
             </div>
           </div>
-        ) : viewMode === 'archive_detail' ? (
-          // === アーカイブ詳細モードの表示 ===
-          <div className="view-archive-detail">
+        ) : viewMode === 'archive_days' ? (
+          // === アーカイブ 日一覧 ===
+          <div className="view-archive-list">
             <div className="archive-header" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <button 
                 className="back-button"
-                onClick={() => setViewMode('archive_list')}
+                onClick={() => setViewMode('archive_months')}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '0.5rem',
                   background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
@@ -344,11 +343,101 @@ function App() {
               >
                 <ArrowLeft size={16} /> 一覧へ戻る
               </button>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>{selectedArchiveKey}</h2>
+              <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>{selectedMonth}のアーカイブ</h2>
+            </div>
+            
+            <div className="archive-links-container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '600px', margin: '0 auto', marginBottom: '4rem' }}>
+              {Object.keys(archiveTree[selectedMonth]?.days || {}).map(day => (
+                <button
+                  key={day}
+                  onClick={() => {
+                    setSelectedDay(day);
+                    setViewMode('archive_times');
+                    window.scrollTo(0, 0);
+                  }}
+                  style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+                    padding: '1.2rem 1.5rem', borderRadius: '12px', color: 'var(--text-primary)',
+                    fontSize: '1.1rem', cursor: 'pointer', transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  <span>{day}の記事</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '12px' }}>{archiveTree[selectedMonth].days[day].count}件</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : viewMode === 'archive_times' ? (
+          // === アーカイブ 時間一覧 ===
+          <div className="view-archive-list">
+            <div className="archive-header" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <button 
+                className="back-button"
+                onClick={() => setViewMode('archive_days')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
+                  color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.9rem',
+                  padding: '8px 16px', borderRadius: '20px', transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+              >
+                <ArrowLeft size={16} /> 戻る
+              </button>
+              <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>{selectedDay}のアーカイブ</h2>
+            </div>
+            
+            <div className="archive-links-container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '600px', margin: '0 auto', marginBottom: '4rem' }}>
+              {Object.keys(archiveTree[selectedMonth]?.days[selectedDay]?.times || {}).map(timeLabel => (
+                <button
+                  key={timeLabel}
+                  onClick={() => {
+                    setSelectedTime(timeLabel);
+                    setViewMode('archive_detail');
+                    window.scrollTo(0, 0);
+                  }}
+                  style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+                    padding: '1.2rem 1.5rem', borderRadius: '12px', color: 'var(--text-primary)',
+                    fontSize: '1.1rem', cursor: 'pointer', transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  <span>{timeLabel}の記事</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '12px' }}>{archiveTree[selectedMonth].days[selectedDay].times[timeLabel].length}件</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : viewMode === 'archive_detail' ? (
+          // === アーカイブ詳細モードの表示 ===
+          <div className="view-archive-detail">
+            <div className="archive-header" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <button 
+                className="back-button"
+                onClick={() => setViewMode('archive_times')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
+                  color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.9rem',
+                  padding: '8px 16px', borderRadius: '20px', transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+              >
+                <ArrowLeft size={16} /> 一覧へ戻る
+              </button>
+              <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>{selectedTime}</h2>
             </div>
             
             <div className="articles-grid">
-              {(archiveGroups.find(g => g.key === selectedArchiveKey)?.articles || []).map(renderArticle)}
+              {(archiveTree[selectedMonth]?.days[selectedDay]?.times[selectedTime] || []).map(renderArticle)}
             </div>
           </div>
         ) : null}
