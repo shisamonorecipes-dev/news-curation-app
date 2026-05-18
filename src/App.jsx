@@ -15,7 +15,8 @@ function App() {
   const [activeCategory, setActiveCategory] = useState('ゲーム業界');
   const [speechSynthesis, setSpeechSynthesis] = useState(null);
   const [playbackRate, setPlaybackRate] = useState(1.0);
-  const [viewMode, setViewMode] = useState('latest'); // 'latest' | 'archive'
+  const [viewMode, setViewMode] = useState('latest'); // 'latest' | 'archive_list' | 'archive_detail'
+  const [selectedArchiveKey, setSelectedArchiveKey] = useState(null);
 
   const categories = ['ゲーム業界', 'eスポーツ', 'インディー', '金融市場'];
 
@@ -39,7 +40,7 @@ function App() {
         .select('*')
         .eq('category', activeCategory)
         .order('created_at', { ascending: false })
-        .limit(30); // 過去分も含めて多めに取得
+        .limit(100); // アーカイブ一覧用に100件まで取得
 
       if (error) {
         console.error("データの取得に失敗しました:", error);
@@ -168,7 +169,26 @@ function App() {
   // 記事の分類（直近1回分=5件を「最新」、それ以降を「過去」）
   const latestArticles = articles.slice(0, 5).sort((a, b) => b.score - a.score);
   const pastArticles = articles.slice(5);
-  const pastPreview = pastArticles.slice(0, 5); // プレビュー用5件
+
+  const formatArchiveDate = (timestamp) => {
+    const d = new Date(timestamp);
+    const year = d.getFullYear();
+    const month = d.getMonth() + 1;
+    const date = d.getDate();
+    const hours = d.getHours();
+    return `${year}年${month}月${date}日 ${hours}時の記事`;
+  };
+
+  const archiveGroups = [];
+  pastArticles.forEach(article => {
+    const key = formatArchiveDate(article.created_at);
+    const existingGroup = archiveGroups.find(g => g.key === key);
+    if (existingGroup) {
+      existingGroup.articles.push(article);
+    } else {
+      archiveGroups.push({ key, articles: [article] });
+    }
+  });
 
   return (
     <div className="app-container">
@@ -221,57 +241,45 @@ function App() {
               </div>
             </section>
 
-            {pastPreview.length > 0 && (
-              <section className="past-section" style={{ marginTop: '4rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '2.5rem' }}>
-                <div className="section-header" style={{ marginBottom: '1.5rem', opacity: 0.8 }}>
-                  <History className="icon-history" style={{ color: 'var(--text-muted)', marginRight: '8px' }} size={20} />
-                  <h2 style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>Previous Trends</h2>
-                </div>
-                <div className="articles-grid past-grid" style={{ opacity: 0.8 }}>
-                  {pastPreview.map(renderArticle)}
-                </div>
-                
-                {pastArticles.length > 5 && (
-                  <div className="archive-link-container" style={{ textAlign: 'center', marginTop: '3rem', marginBottom: '3rem' }}>
-                    <button 
-                      className="archive-button" 
-                      onClick={() => {
-                        setViewMode('archive');
-                        window.scrollTo(0, 0);
-                      }}
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        padding: '14px 32px',
-                        borderRadius: '30px',
-                        color: 'var(--text-secondary)',
-                        fontSize: '1rem',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
-                      }}
-                      onMouseOver={(e) => { 
-                        e.currentTarget.style.background = 'var(--primary)'; 
-                        e.currentTarget.style.color = '#fff'; 
-                        e.currentTarget.style.borderColor = 'var(--primary)';
-                      }}
-                      onMouseOut={(e) => { 
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'; 
-                        e.currentTarget.style.color = 'var(--text-secondary)'; 
-                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                      }}
-                    >
-                      さらに過去の記事を見る
-                    </button>
-                  </div>
-                )}
-              </section>
+            {archiveGroups.length > 0 && (
+              <div className="archive-link-container" style={{ textAlign: 'center', marginTop: '4rem', marginBottom: '3rem' }}>
+                <button 
+                  className="archive-button" 
+                  onClick={() => {
+                    setViewMode('archive_list');
+                    window.scrollTo(0, 0);
+                  }}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    padding: '14px 32px',
+                    borderRadius: '30px',
+                    color: 'var(--text-secondary)',
+                    fontSize: '1rem',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+                  }}
+                  onMouseOver={(e) => { 
+                    e.currentTarget.style.background = 'var(--primary)'; 
+                    e.currentTarget.style.color = '#fff'; 
+                    e.currentTarget.style.borderColor = 'var(--primary)';
+                  }}
+                  onMouseOut={(e) => { 
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'; 
+                    e.currentTarget.style.color = 'var(--text-secondary)'; 
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                >
+                  過去のアーカイブはこちら
+                </button>
+              </div>
             )}
           </div>
-        ) : (
-          // === アーカイブモードの表示 ===
-          <div className="view-archive">
+        ) : viewMode === 'archive_list' ? (
+          // === アーカイブリストモードの表示 ===
+          <div className="view-archive-list">
             <div className="archive-header" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <button 
                 className="back-button"
@@ -285,16 +293,65 @@ function App() {
                 onMouseOver={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
                 onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
               >
-                <ArrowLeft size={16} /> 戻る
+                <ArrowLeft size={16} /> トップへ戻る
               </button>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>Archive - すべての過去記事</h2>
+              <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>過去のアーカイブ一覧</h2>
+            </div>
+            
+            <div className="archive-links-container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '600px', margin: '0 auto', marginBottom: '4rem' }}>
+              {archiveGroups.length === 0 ? (
+                 <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>過去のアーカイブはまだありません。</p>
+              ) : (
+                archiveGroups.map(group => (
+                  <button
+                    key={group.key}
+                    onClick={() => {
+                      setSelectedArchiveKey(group.key);
+                      setViewMode('archive_detail');
+                      window.scrollTo(0, 0);
+                    }}
+                    style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+                      padding: '1.2rem 1.5rem', borderRadius: '12px', color: 'var(--text-primary)',
+                      fontSize: '1.1rem', cursor: 'pointer', transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <span>{group.key}</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '12px' }}>{group.articles.length}件</span>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        ) : viewMode === 'archive_detail' ? (
+          // === アーカイブ詳細モードの表示 ===
+          <div className="view-archive-detail">
+            <div className="archive-header" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <button 
+                className="back-button"
+                onClick={() => setViewMode('archive_list')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
+                  color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.9rem',
+                  padding: '8px 16px', borderRadius: '20px', transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+              >
+                <ArrowLeft size={16} /> 一覧へ戻る
+              </button>
+              <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>{selectedArchiveKey}</h2>
             </div>
             
             <div className="articles-grid">
-              {pastArticles.map(renderArticle)}
+              {(archiveGroups.find(g => g.key === selectedArchiveKey)?.articles || []).map(renderArticle)}
             </div>
           </div>
-        )}
+        ) : null}
       </main>
     </div>
   );
