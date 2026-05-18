@@ -429,22 +429,44 @@ function App() {
         ) : viewMode === 'archive_detail' ? (
           // === アーカイブ詳細モードの表示 ===
           <div className="view-archive-detail">
-            <div className="archive-header" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <button 
-                className="back-button"
-                onClick={() => setViewMode('archive_times')}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '0.5rem',
-                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
-                  color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.9rem',
-                  padding: '8px 16px', borderRadius: '20px', transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-                onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-              >
-                <ArrowLeft size={16} /> 一覧へ戻る
-              </button>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>{selectedTime}</h2>
+            <div className="archive-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  className="back-button"
+                  onClick={() => setViewMode('archive_times')}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '0.5rem',
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
+                    color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.9rem',
+                    padding: '8px 16px', borderRadius: '20px', transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                >
+                  <ArrowLeft size={16} /> 一覧へ戻る
+                </button>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-primary)' }}>{selectedTime}</h2>
+              </div>
+              <div className="controls-right" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <select 
+                  className="rate-select small" 
+                  value={playbackRate} 
+                  onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
+                  title="全体の再生速度"
+                >
+                  <option value={1.0}>1.0x</option>
+                  <option value={1.25}>1.25x</option>
+                  <option value={1.5}>1.5x</option>
+                  <option value={2.0}>2.0x</option>
+                </select>
+                <button 
+                  className={`play-all-btn ${playingId === 'all' ? 'playing' : ''}`}
+                  onClick={() => togglePlayAll(archiveTree[selectedMonth]?.days[selectedDay]?.times[selectedTime] || [])}
+                >
+                  {playingId === 'all' ? <Pause size={16} /> : <ListMusic size={16} />}
+                  <span>{playingId === 'all' ? '全停止' : 'すべて再生'}</span>
+                </button>
+              </div>
             </div>
             
             <div className="articles-grid">
