@@ -225,7 +225,18 @@ function App() {
               <div className="section-header">
                 <Flame className="icon-flame" />
                 <h2>Trending Now</h2>
-                <div className="controls-right">
+                <div className="controls-right" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <select 
+                    className="rate-select small" 
+                    value={playbackRate} 
+                    onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
+                    title="全体の再生速度"
+                  >
+                    <option value={1.0}>1.0x</option>
+                    <option value={1.25}>1.25x</option>
+                    <option value={1.5}>1.5x</option>
+                    <option value={2.0}>2.0x</option>
+                  </select>
                   <button 
                     className={`play-all-btn ${playingId === 'all' ? 'playing' : ''}`}
                     onClick={() => togglePlayAll(latestArticles)}
