@@ -7,11 +7,23 @@ on:
   workflow_dispatch: # 手動で画面から実行するための設定
 
 jobs:
-  trigger-vercel-api:
+  run-update-script:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Update News API
-        run: |
-          curl -X GET "https://curation.shisamonorecipes.com/api/update-news" \
-          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-          --fail
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Run update script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: node scripts/update-news.js
