@@ -22,27 +22,51 @@ const CATEGORY_FEEDS = {
   "ゲーム業界": [
     { name: '4Gamer', url: 'https://www.4gamer.net/rss/index.xml' },
     { name: 'Automaton', url: 'https://automaton-media.com/feed/' },
-    { name: 'Game*Spark', url: 'https://www.gamespark.jp/rss/index.rdf' }
+    { name: 'Game*Spark', url: 'https://www.gamespark.jp/rss/index.rdf' },
+    { name: 'ファミ通', url: 'https://www.famitsu.com/rss/fcom_all.xml' },
+    { name: '電撃オンライン', url: 'https://dengekionline.com/rss/news/' }
   ],
   "国内のニュース(政治)": [
+    { name: 'NHKニュース(政治)', url: 'https://www.nhk.or.jp/rss/news/cat04.xml' },
+    { name: '読売新聞(政治)', url: 'https://www.yomiuri.co.jp/politics/rss.xml' },
+    { name: '朝日新聞(政治)', url: 'https://www.asahi.com/rss/politics.rdf' },
     { name: 'Google News (国内政治)', url: 'https://news.google.com/rss/search?q=政治+国内+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "海外のニュース(政治)": [
+    { name: 'NHKニュース(国際)', url: 'https://www.nhk.or.jp/rss/news/cat06.xml' },
+    { name: '読売新聞(国際)', url: 'https://www.yomiuri.co.jp/world/rss.xml' },
+    { name: 'CNN Japan', url: 'https://www.cnn.co.jp/rss/world.rdf' },
+    { name: 'BBC News Japan', url: 'https://www.bbc.com/japanese/index.xml' },
     { name: 'Google News (国際政治)', url: 'https://news.google.com/rss/search?q=政治+国際+OR+海外+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "国内の金融市場ニュース": [
-    { name: 'Google News (国内金融)', url: 'https://news.google.com/rss/search?q=金融市場+日本+OR+日経平均+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+    { name: '現代ビジネス', url: 'https://gendai.media/list/feed/rss' },
+    { name: '東洋経済', url: 'https://toyokeizai.net/list/feed/rss' },
+    { name: 'ITmedia ビジネス', url: 'https://rss.itmedia.co.jp/rss/2.0/business.xml' },
+    { name: 'Google News (国内経済)', url: 'https://news.google.com/rss/search?q=国内経済+OR+日経平均+OR+金融政策+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "海外の金融市場ニュース": [
-    { name: 'Google News (海外金融)', url: 'https://news.google.com/rss/search?q=金融市場+海外+OR+米国株+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+    { name: 'CoinPost', url: 'https://coinpost.jp/feed' },
+    { name: 'Google News (海外金融)', url: 'https://news.google.com/rss/search?q=金融市場+海外+OR+米国株+OR+FRB+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Google News (世界経済)', url: 'https://news.google.com/rss/search?q=世界経済+OR+NYダウ+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "AIツールやサービス": [
+    { name: 'ITmedia AI+', url: 'https://rss.itmedia.co.jp/rss/2.0/aiplus.xml' },
+    { name: 'Ledge.ai', url: 'https://ledge.ai/feed/' },
+    { name: 'AINOW', url: 'https://ainow.ai/feed/' },
+    { name: 'CNET Japan', url: 'https://feeds.feedburner.com/cnet/japan' },
     { name: 'Google News (AI)', url: 'https://news.google.com/rss/search?q=生成AI+OR+ChatGPT+OR+AIツール+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "GAFAMに関連するニュース": [
+    { name: 'ギズモード・ジャパン', url: 'https://www.gizmodo.jp/index.xml' },
+    { name: 'ITmedia NEWS', url: 'https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml' },
     { name: 'Google News (GAFAM)', url: 'https://news.google.com/rss/search?q=Google+OR+Apple+OR+Meta+OR+Amazon+OR+Microsoft+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "広告マーケティング(広告メディア含む)": [
+    { name: 'MarkeZine', url: 'https://markezine.jp/rss/new' },
+    { name: 'AdverTimes', url: 'https://www.advertimes.com/feed/' },
+    { name: 'Web担当者Forum', url: 'https://webtan.impress.co.jp/rss.xml' },
+    { name: 'DIGIDAY', url: 'https://digiday.jp/feed/' },
     { name: 'Google News (マーケティング)', url: 'https://news.google.com/rss/search?q=広告マーケティング+OR+デジタル広告+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ]
 };
@@ -80,7 +104,7 @@ async function processCategory(targetCategory) {
     try {
       const safeUrl = encodeURI(feed.url);
       const data = await parser.parseURL(safeUrl);
-      const recentItems = data.items.slice(0, 15);
+      const recentItems = data.items.slice(0, 30);
       recentItems.forEach(item => {
         if (!existingUrls.has(item.link)) {
           articles.push({ source: feed.name, title: item.title, link: item.link });
@@ -107,12 +131,13 @@ async function processCategory(targetCategory) {
 【記事リスト】
 ${articles.map((a, i) => `[${i}] ${a.title} (Source: ${a.source}, Link: ${a.link})`).join('\n')}
 
-【指示】
-1. 同じ内容やトピックを扱っている記事をグループ化してください。
-2. グループ化されたトピックを取り上げているメディアの数を「話題性（sourceCount）」としてカウントしてください。スコアは独自に1〜100で設定してください（複数サイトで取り上げられているほど高く）。
-3. 話題性のスコアが高い上位5つのトピックを選定してください。
-4. 各トピックについて、具体的な固有名詞を含め、150〜200文字程度のニュースサマリーを作成してください。
-5. 必ず以下のJSON形式の配列でのみ出力してください。マークダウン（\`\`\`json）は含めず、純粋なJSONテキストのみを返してください。
+【指示と厳格なルール】
+1. 記事リストから、同じ内容やトピックを扱っている記事をグループ化してください。
+2. グループ化されたトピックを取り上げているメディアの数を「話題性（sourceCount）」としてカウントしてください。
+3. 【超重要】必ず「2つ以上の異なる情報源（メディア）」で取り上げられているトピックのみを選定してください。1つのサイトでしか報じられていない独自のニュースや、株価・為替の定期的な速報などの機械的なデータは【絶対に】除外してください。
+4. 話題性のスコアが高い上位5つのトピックを選定してください。（※もし2メディア以上で重複している話題が5つ未満の場合は、該当する数だけ出力し、無理に5つ選ばないでください）
+5. 各トピックについて、具体的な固有名詞を含め、150〜200文字程度のニュースサマリーを作成してください。
+6. 必ず以下のJSON形式の配列でのみ出力してください。マークダウン（\`\`\`json）は含めず、純粋なJSONテキストのみを返してください。
 
 [
   {
