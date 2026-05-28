@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'Curation.AI',
-        short_name: 'Curation.AI',
+        name: 'ししゃものニュース.AI',
+        short_name: 'ししゃものニュース.AI',
         description: '話題のニュースをAIがピックアップ',
         theme_color: '#0B0F19',
         background_color: '#0B0F19',
