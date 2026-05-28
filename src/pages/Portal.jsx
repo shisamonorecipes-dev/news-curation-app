@@ -69,6 +69,10 @@ export default function Portal() {
           <h4 style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', fontSize: '0.95rem', fontWeight: '600' }}>🤖 記事の選定ロジック</h4>
           <p style={{ margin: 0 }}>各カテゴリに関連する複数の信頼できるニュースソースから最新記事を取得し、その中から「複数のサイトで同時に話題になっている記事（トレンドスコアが高いもの）」をAIが厳選・要約して掲載しています。</p>
         </div>
+        <div style={{ marginTop: '1.5rem' }}>
+          <h4 style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', fontSize: '0.95rem', fontWeight: '600' }}>⚖️ 著作権および情報の取り扱いについて</h4>
+          <p style={{ margin: 0 }}>当サイトは、各メディアが報じる「事実（ファクト）」のみをAIが抽出し、独自の文章として再構成（要約）して配信しています。元記事の文章をそのまま複製する二次利用は行っておりません。また、各要約には必ず出典元リンクを明示し、メディア運営者様へのアクセス貢献（送客）を前提とした運用を行っております。</p>
+        </div>
       </section>
     </div>
   );
