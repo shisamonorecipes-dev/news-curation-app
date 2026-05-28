@@ -474,6 +474,9 @@ export default function CategoryPage() {
             
             <div className="articles-grid">
               {(archiveTree[selectedMonth]?.days[selectedDay]?.times[selectedTime] || []).map(renderArticle)}
+            </div>
+          </div>
+        ) : null}
       </main>
     </div>
   );
