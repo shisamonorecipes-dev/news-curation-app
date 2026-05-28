@@ -22,7 +22,7 @@ export default function Portal() {
         <p className="subtitle" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>話題のニュースをAIがピックアップ</p>
       </header>
 
-      <div className="portal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.2rem', marginBottom: '4rem' }}>
+      <div className="portal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '4rem', width: '100%' }}>
         {CATEGORIES.map((cat) => (
           <Link 
             key={cat.id} 
@@ -30,9 +30,9 @@ export default function Portal() {
             className="portal-card glass-panel"
             style={{ 
               display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',
-              padding: '1.5rem 1.5rem', textDecoration: 'none', color: 'var(--text-primary)',
+              padding: '1.5rem', textDecoration: 'none', color: 'var(--text-primary)',
               transition: 'all 0.3s ease', border: '1px solid rgba(255,255,255,0.05)',
-              borderRadius: '16px'
+              borderRadius: '16px', height: '100%'
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.transform = 'translateY(-3px)';
@@ -45,8 +45,10 @@ export default function Portal() {
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            <cat.icon size={28} color={cat.color} style={{ marginRight: '1.2rem', flexShrink: 0 }} />
-            <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.4', textAlign: 'left' }}>{cat.name}</h3>
+            <div style={{ flexShrink: 0, width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginRight: '1rem' }}>
+              <cat.icon size={24} color={cat.color} />
+            </div>
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '600', lineHeight: '1.4', textAlign: 'left', wordBreak: 'keep-all', overflowWrap: 'anywhere' }}>{cat.name}</h3>
           </Link>
         ))}
       </div>
