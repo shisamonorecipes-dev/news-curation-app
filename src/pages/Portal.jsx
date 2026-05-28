@@ -17,7 +17,7 @@ export default function Portal() {
   return (
     <div className="portal-container" style={{ width: '100%', maxWidth: '1000px', margin: '0 auto', padding: '1rem' }}>
       <header className="header" style={{ textAlign: 'center', marginBottom: '4rem', marginTop: '2rem' }}>
-        <h1 className="logo text-gradient" style={{ fontSize: '2.8rem', marginBottom: '1rem', wordBreak: 'keep-all' }}>ししゃものニュース.AI</h1>
+        <h1 className="logo text-gradient" style={{ fontSize: 'clamp(1.6rem, 6vw, 3rem)', marginBottom: '1rem', lineHeight: '1.2' }}>ししゃものニュース.AI</h1>
         <p className="subtitle" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>話題のニュースをAIがピックアップ</p>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>見たいニュースのカテゴリをクリック(またはタップ)してください</p>
       </header>
