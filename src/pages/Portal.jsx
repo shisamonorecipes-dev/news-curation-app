@@ -8,9 +8,9 @@ export const CATEGORIES = [
   { id: 'politics-global', name: '海外のニュース(政治)', icon: Globe2, color: '#0EA5E9' },
   { id: 'finance-jp', name: '国内の金融市場ニュース', icon: TrendingUp, color: '#10B981' },
   { id: 'finance-global', name: '海外の金融市場ニュース', icon: TrendingUp, color: '#14B8A6' },
-  { id: 'ai-tech', name: 'AIのツールやサービス、仕様変更などに関わるニュース', icon: Cpu, color: '#D946EF' },
+  { id: 'ai-tech', name: 'AIツールやサービス', icon: Cpu, color: '#D946EF' },
   { id: 'big-tech', name: 'GAFAMに関連するニュース', icon: Building2, color: '#3B82F6' },
-  { id: 'marketing', name: '広告マーケティング(広告メディア含む)に関わるニュース', icon: Megaphone, color: '#F43F5E' },
+  { id: 'marketing', name: '広告マーケティング(広告メディア含む)', icon: Megaphone, color: '#F43F5E' },
 ];
 
 export default function Portal() {

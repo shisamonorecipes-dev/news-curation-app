@@ -36,13 +36,13 @@ const CATEGORY_FEEDS = {
   "海外の金融市場ニュース": [
     { name: 'Google News (海外金融)', url: 'https://news.google.com/rss/search?q=金融市場+海外+OR+米国株+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
-  "AIのツールやサービス、仕様変更などに関わるニュース": [
+  "AIツールやサービス": [
     { name: 'Google News (AI)', url: 'https://news.google.com/rss/search?q=生成AI+OR+ChatGPT+OR+AIツール+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "GAFAMに関連するニュース": [
     { name: 'Google News (GAFAM)', url: 'https://news.google.com/rss/search?q=Google+OR+Apple+OR+Meta+OR+Amazon+OR+Microsoft+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
-  "広告マーケティング(広告メディア含む)に関わるニュース": [
+  "広告マーケティング(広告メディア含む)": [
     { name: 'Google News (マーケティング)', url: 'https://news.google.com/rss/search?q=広告マーケティング+OR+デジタル広告+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ]
 };
