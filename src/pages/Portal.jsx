@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Gamepad2, Landmark, Globe2, TrendingUp, Cpu, Wrench, Building2, Megaphone, Newspaper } from 'lucide-react';
+import { Gamepad2, Landmark, Globe2, TrendingUp, Cpu, Building2, Megaphone, Info } from 'lucide-react';
 
 export const CATEGORIES = [
   { id: 'game', name: 'ゲーム業界', icon: Gamepad2, color: '#9b87f5' },
@@ -18,7 +18,8 @@ export default function Portal() {
     <div className="portal-container" style={{ width: '100%', maxWidth: '1000px', margin: '0 auto', padding: '1rem' }}>
       <header className="header" style={{ textAlign: 'center', marginBottom: '4rem', marginTop: '2rem' }}>
         <h1 className="logo text-gradient" style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Curation.AI</h1>
-        <p className="subtitle" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>話題のニュースをAIがピックアップ</p>
+        <p className="subtitle" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>話題のニュースをAIがピックアップ</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>見たいニュースのカテゴリをクリック(またはタップ)してください</p>
       </header>
 
       <div className="portal-grid-layout" style={{ marginBottom: '4rem' }}>
@@ -51,6 +52,24 @@ export default function Portal() {
           </Link>
         ))}
       </div>
+
+      <section className="portal-notes" style={{ 
+        background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', 
+        borderRadius: '16px', padding: '2rem', marginTop: '4rem', color: 'var(--text-muted)',
+        fontSize: '0.9rem', lineHeight: '1.6'
+      }}>
+        <h3 style={{ color: 'var(--text-primary)', fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600' }}>
+          <Info size={18} color="var(--primary)" /> このサイトについて
+        </h3>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <h4 style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', fontSize: '0.95rem', fontWeight: '600' }}>🕒 ニュースの更新時間</h4>
+          <p style={{ margin: 0 }}>毎日、日本時間の 0:00, 6:00, 12:00, 18:00 頃にAIが自動で最新ニュースを収集・要約しています。<br/><span style={{ fontSize: '0.85rem', opacity: 0.8 }}>※システムの順番待ち状況により、数十分〜数時間ほど遅れる場合があります。</span></p>
+        </div>
+        <div>
+          <h4 style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', fontSize: '0.95rem', fontWeight: '600' }}>🤖 記事の選定ロジック</h4>
+          <p style={{ margin: 0 }}>各カテゴリに関連する複数の信頼できるニュースソースから最新記事を取得し、その中から「複数のサイトで同時に話題になっている記事（トレンドスコアが高いもの）」をAIが厳選・要約して掲載しています。</p>
+        </div>
+      </section>
     </div>
   );
 }
