@@ -23,10 +23,33 @@ const CATEGORY_FEEDS = {
     { name: '4Gamer', url: 'https://www.4gamer.net/rss/index.xml' },
     { name: 'Automaton', url: 'https://automaton-media.com/feed/' },
     { name: 'Game*Spark', url: 'https://www.gamespark.jp/rss/index.rdf' }
+  ],
+  "国内のニュース(政治)": [
+    { name: 'Google News (国内政治)', url: 'https://news.google.com/rss/search?q=政治+国内+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+  ],
+  "海外のニュース(政治)": [
+    { name: 'Google News (国際政治)', url: 'https://news.google.com/rss/search?q=政治+国際+OR+海外+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+  ],
+  "国内の金融市場ニュース": [
+    { name: 'Google News (国内金融)', url: 'https://news.google.com/rss/search?q=金融市場+日本+OR+日経平均+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+  ],
+  "海外の金融市場ニュース": [
+    { name: 'Google News (海外金融)', url: 'https://news.google.com/rss/search?q=金融市場+海外+OR+米国株+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+  ],
+  "AIのツールやサービス、仕様変更などに関わるニュース": [
+    { name: 'Google News (AI)', url: 'https://news.google.com/rss/search?q=生成AI+OR+ChatGPT+OR+AIツール+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+  ],
+  "GAFAMに関連するニュース": [
+    { name: 'Google News (GAFAM)', url: 'https://news.google.com/rss/search?q=Google+OR+Apple+OR+Meta+OR+Amazon+OR+Microsoft+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+  ],
+  "広告マーケティング(広告メディア含む)に関わるニュース": [
+    { name: 'Google News (マーケティング)', url: 'https://news.google.com/rss/search?q=広告マーケティング+OR+デジタル広告+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ]
 };
 
-async function main(targetCategory = "ゲーム業界") {
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function processCategory(targetCategory) {
   console.log(`\n🚀【${targetCategory}】のニュース取得プロセスを開始します...`);
   
   const FEEDS = CATEGORY_FEEDS[targetCategory];
@@ -55,7 +78,8 @@ async function main(targetCategory = "ゲーム業界") {
   const articles = [];
   for (const feed of FEEDS) {
     try {
-      const data = await parser.parseURL(feed.url);
+      const safeUrl = encodeURI(feed.url);
+      const data = await parser.parseURL(safeUrl);
       const recentItems = data.items.slice(0, 15);
       recentItems.forEach(item => {
         if (!existingUrls.has(item.link)) {
@@ -77,7 +101,7 @@ async function main(targetCategory = "ゲーム業界") {
   // 2. Geminiによる要約とスコアリング
   console.log('🔄 2. AI(Gemini)に分析・要約を依頼中...');
   const prompt = `
-以下のゲーム関連ニュース記事のリスト（タイトルと情報源）を分析してください。
+以下のニュース記事のリスト（タイトルと情報源）を分析してください。
 カテゴリ: ${targetCategory}
 
 【記事リスト】
@@ -146,6 +170,24 @@ ${articles.map((a, i) => `[${i}] ${a.title} (Source: ${a.source}, Link: ${a.link
     console.log('✅ データベースに正常に保存されました！');
     console.log(`   保存された最新トピック: ${data[0].title}`);
   }
+}
+
+async function main() {
+  console.log('🌟 全カテゴリの自動更新処理を開始します...');
+  const categories = Object.keys(CATEGORY_FEEDS);
+  
+  for (let i = 0; i < categories.length; i++) {
+    const category = categories[i];
+    await processCategory(category);
+    
+    // APIレートリミット対策として、次のカテゴリ実行前に3秒待機する（最後以外）
+    if (i < categories.length - 1) {
+      console.log('⏳ APIの制限を避けるため、3秒待機します...\n');
+      await sleep(3000);
+    }
+  }
+  
+  console.log('\n✨ すべてのカテゴリのニュース更新が完了しました！');
 }
 
 main();
