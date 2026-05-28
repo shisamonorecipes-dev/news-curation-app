@@ -22,7 +22,7 @@ export default function Portal() {
         <p className="subtitle" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>話題のニュースをAIがピックアップ</p>
       </header>
 
-      <div className="portal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
+      <div className="portal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '1rem', marginBottom: '4rem' }}>
         {CATEGORIES.map((cat) => (
           <Link 
             key={cat.id} 
@@ -30,8 +30,9 @@ export default function Portal() {
             className="portal-card glass-panel"
             style={{ 
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              padding: '2.5rem 1.5rem', textDecoration: 'none', color: 'var(--text-primary)',
-              transition: 'all 0.3s ease', textAlign: 'center', border: '1px solid rgba(255,255,255,0.05)'
+              padding: '1.5rem 0.5rem', textDecoration: 'none', color: 'var(--text-primary)',
+              transition: 'all 0.3s ease', textAlign: 'center', border: '1px solid rgba(255,255,255,0.05)',
+              borderRadius: '16px', aspectRatio: '1 / 1'
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.transform = 'translateY(-5px)';
@@ -44,8 +45,8 @@ export default function Portal() {
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            <cat.icon size={48} color={cat.color} style={{ marginBottom: '1.5rem' }} />
-            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '500', lineHeight: '1.4' }}>{cat.name}</h3>
+            <cat.icon size={36} color={cat.color} style={{ marginBottom: '1rem' }} />
+            <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '500', lineHeight: '1.4' }}>{cat.name}</h3>
           </Link>
         ))}
       </div>
