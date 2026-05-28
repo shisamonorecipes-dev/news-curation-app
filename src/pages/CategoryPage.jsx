@@ -198,16 +198,15 @@ export default function CategoryPage() {
 
   return (
     <div className="category-page-container">
-      <header className="header" style={{ marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem', gap: '1rem' }}>
-          <Link to="/" style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', textDecoration: 'none', background: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '20px', fontSize: '0.9rem' }}>
+      <header className="category-header">
+        <div className="category-header-top">
+          <Link to="/" className="back-button">
             <Home size={16} /> ポータルへ戻る
           </Link>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-             <categoryConfig.icon size={24} color={categoryConfig.color} style={{ flexShrink: 0 }} />
-             <h1 className="logo text-gradient" style={{ fontSize: '1.5rem', margin: 0, textAlign: 'center', lineHeight: '1.3' }}>{categoryConfig.name}</h1>
-          </div>
-          <div style={{ flexShrink: 0, width: '80px' }}></div> {/* スペーサー */}
+        </div>
+        <div className="category-header-title">
+           <categoryConfig.icon size={28} color={categoryConfig.color} style={{ flexShrink: 0 }} />
+           <h1 className="logo text-gradient">{categoryConfig.name}</h1>
         </div>
       </header>
 
