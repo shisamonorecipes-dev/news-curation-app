@@ -22,22 +22,22 @@ export default function Portal() {
         <p className="subtitle" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>話題のニュースをAIがピックアップ</p>
       </header>
 
-      <div className="portal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '1rem', marginBottom: '4rem' }}>
+      <div className="portal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.2rem', marginBottom: '4rem' }}>
         {CATEGORIES.map((cat) => (
           <Link 
             key={cat.id} 
             to={`/category/${cat.id}`} 
             className="portal-card glass-panel"
             style={{ 
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              padding: '1.5rem 0.5rem', textDecoration: 'none', color: 'var(--text-primary)',
-              transition: 'all 0.3s ease', textAlign: 'center', border: '1px solid rgba(255,255,255,0.05)',
-              borderRadius: '16px', aspectRatio: '1 / 1'
+              display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',
+              padding: '1.5rem 1.5rem', textDecoration: 'none', color: 'var(--text-primary)',
+              transition: 'all 0.3s ease', border: '1px solid rgba(255,255,255,0.05)',
+              borderRadius: '16px'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.transform = 'translateY(-3px)';
               e.currentTarget.style.borderColor = cat.color;
-              e.currentTarget.style.boxShadow = `0 10px 20px -10px ${cat.color}66`;
+              e.currentTarget.style.boxShadow = `0 8px 15px -8px ${cat.color}66`;
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.transform = 'translateY(0)';
@@ -45,8 +45,8 @@ export default function Portal() {
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            <cat.icon size={36} color={cat.color} style={{ marginBottom: '1rem' }} />
-            <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '500', lineHeight: '1.4' }}>{cat.name}</h3>
+            <cat.icon size={28} color={cat.color} style={{ marginRight: '1.2rem', flexShrink: 0 }} />
+            <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '500', lineHeight: '1.4', textAlign: 'left' }}>{cat.name}</h3>
           </Link>
         ))}
       </div>
