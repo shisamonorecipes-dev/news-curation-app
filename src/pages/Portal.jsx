@@ -8,21 +8,20 @@ export const CATEGORIES = [
   { id: 'politics-global', name: '海外のニュース(政治)', icon: Globe2, color: '#0EA5E9' },
   { id: 'finance-jp', name: '国内の金融市場ニュース', icon: TrendingUp, color: '#10B981' },
   { id: 'finance-global', name: '海外の金融市場ニュース', icon: TrendingUp, color: '#14B8A6' },
-  { id: 'ai', name: 'AIのツールやサービス', icon: Cpu, color: '#D946EF' },
-  { id: 'tech-updates', name: '仕様変更などに関わるニュース', icon: Wrench, color: '#64748B' },
+  { id: 'ai-tech', name: 'AIのツールやサービス、仕様変更などに関わるニュース', icon: Cpu, color: '#D946EF' },
   { id: 'big-tech', name: 'GAFAMに関連するニュース', icon: Building2, color: '#3B82F6' },
   { id: 'marketing', name: '広告マーケティング(広告メディア含む)に関わるニュース', icon: Megaphone, color: '#F43F5E' },
 ];
 
 export default function Portal() {
   return (
-    <div className="portal-container" style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem' }}>
+    <div className="portal-container" style={{ width: '100%', maxWidth: '1000px', margin: '0 auto', padding: '1rem' }}>
       <header className="header" style={{ textAlign: 'center', marginBottom: '4rem', marginTop: '2rem' }}>
         <h1 className="logo text-gradient" style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Curation.AI</h1>
         <p className="subtitle" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>話題のニュースをAIがピックアップ</p>
       </header>
 
-      <div className="portal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '4rem', width: '100%' }}>
+      <div className="portal-grid-layout" style={{ marginBottom: '4rem' }}>
         {CATEGORIES.map((cat) => (
           <Link 
             key={cat.id} 

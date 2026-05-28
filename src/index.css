@@ -341,3 +341,17 @@ body {
   color: #6ee7b7;
   border-color: rgba(16, 185, 129, 0.3);
 }
+
+/* Portal Layout */
+.portal-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .portal-grid-layout {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
