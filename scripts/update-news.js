@@ -30,14 +30,18 @@ const CATEGORY_FEEDS = {
     { name: 'NHKニュース(政治)', url: 'https://www.nhk.or.jp/rss/news/cat04.xml' },
     { name: '読売新聞(政治)', url: 'https://www.yomiuri.co.jp/politics/rss.xml' },
     { name: '朝日新聞(政治)', url: 'https://www.asahi.com/rss/politics.rdf' },
-    { name: 'Google News (国内政治)', url: 'https://news.google.com/rss/search?q=政治+国内+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+    { name: 'TBS NEWS DIG(政治)', url: 'https://newsdig.tbs.co.jp/rss/articles/-/politics' },
+    { name: 'FNNプライムオンライン(政治)', url: 'https://www.fnn.jp/category/news/politics/rss' },
+    { name: 'Google News (国内政治)', url: 'https://news.google.com/rss/search?q=政治+国内+-高校+-大学+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "海外のニュース(政治)": [
     { name: 'NHKニュース(国際)', url: 'https://www.nhk.or.jp/rss/news/cat06.xml' },
     { name: '読売新聞(国際)', url: 'https://www.yomiuri.co.jp/world/rss.xml' },
     { name: 'CNN Japan', url: 'https://www.cnn.co.jp/rss/world.rdf' },
     { name: 'BBC News Japan', url: 'https://www.bbc.com/japanese/index.xml' },
-    { name: 'Google News (国際政治)', url: 'https://news.google.com/rss/search?q=政治+国際+OR+海外+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+    { name: 'Newsweek Japan', url: 'https://www.newsweekjapan.jp/headlines.rss' },
+    { name: 'AFP BB News', url: 'https://feeds.afpbb.com/afpbb/news/all' },
+    { name: 'Google News (国際政治)', url: 'https://news.google.com/rss/search?q=政治+(海外+OR+国際)+-高校+-大学+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "国内の金融市場ニュース": [
     { name: '現代ビジネス', url: 'https://gendai.media/list/feed/rss' },
@@ -104,7 +108,7 @@ async function processCategory(targetCategory) {
     try {
       const safeUrl = encodeURI(feed.url);
       const data = await parser.parseURL(safeUrl);
-      const recentItems = data.items.slice(0, 30);
+      const recentItems = data.items.slice(0, 100);
       recentItems.forEach(item => {
         if (!existingUrls.has(item.link)) {
           articles.push({ source: feed.name, title: item.title, link: item.link });
