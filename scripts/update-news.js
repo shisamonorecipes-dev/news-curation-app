@@ -65,11 +65,11 @@ const CATEGORY_FEEDS = {
     { name: 'Newsweek Japan', url: 'https://www.newsweekjapan.jp/headlines.rss' },
     { name: 'AFP BB News', url: 'https://feeds.afpbb.com/afpbb/news/all' },
     { name: 'クーリエ・ジャポン', url: 'https://courrier.jp/news/feed/' },
+    { name: 'swissinfo (スイス連邦放送)', url: 'https://www.swissinfo.ch/jpn/rss' },
     { name: 'WSJ (Politics)', url: 'https://news.google.com/rss/search?q=site:jp.wsj.com+政治+OR+国際+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: '聯合ニュース', url: 'https://jp.yna.co.kr/rss/yna.xml' },
-    { name: '中央日報', url: 'https://japanese.joins.com/rss/news' },
-    { name: 'フォーカス台湾', url: 'https://japan.focustaiwan.tw/rss/cross-strait-intl' },
-    { name: 'Arab News Japan', url: 'https://www.arabnews.jp/feed/' }
+    { name: 'Bloomberg (Politics)', url: 'https://news.google.com/rss/search?q=site:www.bloomberg.co.jp+政治+OR+国際+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Forbes JAPAN (Politics)', url: 'https://news.google.com/rss/search?q=site:forbesjapan.com+政治+OR+国際+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Business Insider (Politics)', url: 'https://news.google.com/rss/search?q=site:businessinsider.jp+国際+OR+政治+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "国内の金融市場ニュース": [
     { name: '現代ビジネス', url: 'https://gendai.media/list/feed/rss' },
@@ -93,20 +93,20 @@ const CATEGORY_FEEDS = {
     { name: 'CoinPost', url: 'https://coinpost.jp/feed' },
     { name: 'CoinDesk Japan', url: 'https://www.coindeskjapan.com/feed/' },
     { name: 'CoinTelegraph Japan', url: 'https://jp.cointelegraph.com/rss' },
-    { name: '36Kr Japan', url: 'https://36kr.jp/feed/' },
     { name: 'MIT Tech Review', url: 'https://www.technologyreview.jp/feed/' },
+    { name: 'WIRED (Economy)', url: 'https://news.google.com/rss/search?q=site:wired.jp+経済+OR+ビジネス+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
     { name: 'Business Insider (Economy)', url: 'https://news.google.com/rss/search?q=site:businessinsider.jp+海外+OR+世界経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "AIツールやサービス": [
     { name: 'ITmedia AI+', url: 'https://rss.itmedia.co.jp/rss/2.0/aiplus.xml' },
     { name: 'Ledge.ai', url: 'https://ledge.ai/feed/' },
     { name: 'AINOW', url: 'https://ainow.ai/feed/' },
-    { name: 'CNET Japan', url: 'https://feeds.feedburner.com/cnet/japan' },
-    { name: 'PC Watch', url: 'https://pc.watch.impress.co.jp/data/rss/1.0/pcw/feed.rdf' },
-    { name: 'ASCII.jp', url: 'https://ascii.jp/macmac/rss.xml' },
-    { name: '＠IT', url: 'https://rss.itmedia.co.jp/rss/2.0/atmarkit.xml' },
+    { name: 'CNET Japan (AI)', url: 'https://news.google.com/rss/search?q=site:japan.cnet.com+AI+OR+人工知能+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'PC Watch (AI)', url: 'https://news.google.com/rss/search?q=site:pc.watch.impress.co.jp+AI+OR+人工知能+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'ASCII (AI)', url: 'https://news.google.com/rss/search?q=site:ascii.jp+AI+OR+人工知能+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: '＠IT (AI)', url: 'https://news.google.com/rss/search?q=site:atmarkit.itmedia.co.jp+AI+OR+人工知能+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
     { name: 'WIRED (AI)', url: 'https://news.google.com/rss/search?q=site:wired.jp+AI+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: '36Kr Japan (AI)', url: 'https://news.google.com/rss/search?q=site:36kr.jp+AI+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'MIT Tech Review (AI)', url: 'https://news.google.com/rss/search?q=site:technologyreview.jp+AI+OR+人工知能+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
     { name: 'IoT NEWS', url: 'https://iotnews.jp/feed' },
     { name: 'Google News (AI)', url: 'https://news.google.com/rss/search?q=生成AI+OR+ChatGPT+OR+AIツール+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
