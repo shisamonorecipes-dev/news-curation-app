@@ -29,7 +29,10 @@ const CATEGORY_FEEDS = {
     { name: 'Automaton', url: 'https://automaton-media.com/feed/' },
     { name: 'Game*Spark', url: 'https://www.gamespark.jp/rss/index.rdf' },
     { name: 'ファミ通', url: 'https://www.famitsu.com/rss/fcom_all.xml' },
-    { name: '電撃オンライン', url: 'https://dengekionline.com/rss/news/' }
+    { name: '電撃オンライン', url: 'https://dengekionline.com/rss/news/' },
+    { name: 'INSIDE', url: 'https://www.inside-games.jp/rss/index.rdf' },
+    { name: 'IGN Japan', url: 'https://jp.ign.com/feed.xml' },
+    { name: 'Gamer', url: 'https://www.gamer.ne.jp/news/rss/' }
   ],
   "国内のニュース(政治)": [
     { name: 'NHKニュース(政治)', url: 'https://www.nhk.or.jp/rss/news/cat04.xml' },
@@ -37,6 +40,8 @@ const CATEGORY_FEEDS = {
     { name: '朝日新聞(政治)', url: 'https://www.asahi.com/rss/politics.rdf' },
     { name: 'TBS NEWS DIG(政治)', url: 'https://newsdig.tbs.co.jp/rss/articles/-/politics' },
     { name: 'FNNプライムオンライン(政治)', url: 'https://www.fnn.jp/category/news/politics/rss' },
+    { name: '毎日新聞(政治)', url: 'https://mainichi.jp/rss/etc/seiji.xml' },
+    { name: '産経新聞(政治)', url: 'https://www.sankei.com/rss/news/politics.xml' },
     { name: 'Google News (国内政治)', url: 'https://news.google.com/rss/search?q=政治+国内+-高校+-大学+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "海外のニュース(政治)": [
@@ -44,30 +49,40 @@ const CATEGORY_FEEDS = {
     { name: 'BBC News Japan', url: 'https://www.bbc.com/japanese/index.xml' },
     { name: 'Newsweek Japan', url: 'https://www.newsweekjapan.jp/headlines.rss' },
     { name: 'AFP BB News', url: 'https://feeds.afpbb.com/afpbb/news/all' },
-    { name: 'Reuters Japan', url: 'https://news.google.com/rss/search?q=site:jp.reuters.com+政治+OR+国際+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+    { name: 'クーリエ・ジャポン', url: 'https://courrier.jp/news/feed/' },
+    { name: 'WSJ (Politics)', url: 'https://news.google.com/rss/search?q=site:jp.wsj.com+政治+OR+国際+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "国内の金融市場ニュース": [
     { name: '現代ビジネス', url: 'https://gendai.media/list/feed/rss' },
-    { name: '東洋経済', url: 'https://toyokeizai.net/list/feed/rss' },
+    { name: '東洋経済オンライン', url: 'https://toyokeizai.net/list/feed/rss' },
     { name: 'ITmedia ビジネス', url: 'https://rss.itmedia.co.jp/rss/2.0/business.xml' },
+    { name: 'DIAMOND online', url: 'https://diamond.jp/list/feed/rss' },
+    { name: 'PRESIDENT Online', url: 'https://president.jp/list/feed/rss' },
+    { name: 'マネーポストWEB', url: 'https://www.moneypost.jp/feed' },
     { name: 'Google News (国内経済)', url: 'https://news.google.com/rss/search?q=国内経済+OR+日経平均+OR+金融政策+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "海外の金融市場ニュース": [
-    { name: 'The Wall Street Journal', url: 'https://news.google.com/rss/search?q=site:jp.wsj.com+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'Bloomberg', url: 'https://news.google.com/rss/search?q=site:www.bloomberg.co.jp+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'Reuters Japan (Business)', url: 'https://news.google.com/rss/search?q=site:jp.reuters.com+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'Forbes JAPAN', url: 'https://news.google.com/rss/search?q=site:forbesjapan.com+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+    { name: 'The Wall Street Journal', url: 'https://news.google.com/rss/search?q=site:jp.wsj.com+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Bloomberg', url: 'https://news.google.com/rss/search?q=site:www.bloomberg.co.jp+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Reuters Japan', url: 'https://news.google.com/rss/search?q=site:jp.reuters.com+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Forbes JAPAN', url: 'https://news.google.com/rss/search?q=site:forbesjapan.com+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'CoinPost', url: 'https://coinpost.jp/feed' },
+    { name: 'CoinDesk Japan', url: 'https://www.coindeskjapan.com/feed/' }
   ],
   "AIツールやサービス": [
     { name: 'ITmedia AI+', url: 'https://rss.itmedia.co.jp/rss/2.0/aiplus.xml' },
     { name: 'Ledge.ai', url: 'https://ledge.ai/feed/' },
     { name: 'AINOW', url: 'https://ainow.ai/feed/' },
     { name: 'CNET Japan', url: 'https://feeds.feedburner.com/cnet/japan' },
+    { name: 'PC Watch', url: 'https://pc.watch.impress.co.jp/data/rss/1.0/pcw/feed.rdf' },
+    { name: 'ASCII.jp', url: 'https://ascii.jp/macmac/rss.xml' },
     { name: 'Google News (AI)', url: 'https://news.google.com/rss/search?q=生成AI+OR+ChatGPT+OR+AIツール+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "GAFAMに関連するニュース": [
     { name: 'ギズモード・ジャパン', url: 'https://www.gizmodo.jp/index.xml' },
     { name: 'ITmedia NEWS', url: 'https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml' },
+    { name: 'Business Insider Japan', url: 'https://www.businessinsider.jp/feed/index.xml' },
+    { name: 'WIRED.jp', url: 'https://wired.jp/feed/rss/' },
     { name: 'Google News (GAFAM)', url: 'https://news.google.com/rss/search?q=Google+OR+Apple+OR+Meta+OR+Amazon+OR+Microsoft+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "広告マーケティング(広告メディア含む)": [
@@ -75,6 +90,8 @@ const CATEGORY_FEEDS = {
     { name: 'AdverTimes', url: 'https://www.advertimes.com/feed/' },
     { name: 'Web担当者Forum', url: 'https://webtan.impress.co.jp/rss.xml' },
     { name: 'DIGIDAY', url: 'https://digiday.jp/feed/' },
+    { name: 'ferret', url: 'https://ferret-plus.com/rss' },
+    { name: 'PR EDGE', url: 'https://predge.jp/feed/' },
     { name: 'Google News (マーケティング)', url: 'https://news.google.com/rss/search?q=広告マーケティング+OR+デジタル広告+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ]
 };
