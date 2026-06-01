@@ -40,13 +40,11 @@ const CATEGORY_FEEDS = {
     { name: 'Google News (国内政治)', url: 'https://news.google.com/rss/search?q=政治+国内+-高校+-大学+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "海外のニュース(政治)": [
-    { name: 'NHKニュース(国際)', url: 'https://www.nhk.or.jp/rss/news/cat06.xml' },
-    { name: '読売新聞(国際)', url: 'https://www.yomiuri.co.jp/world/rss.xml' },
     { name: 'CNN Japan', url: 'https://www.cnn.co.jp/rss/world.rdf' },
     { name: 'BBC News Japan', url: 'https://www.bbc.com/japanese/index.xml' },
     { name: 'Newsweek Japan', url: 'https://www.newsweekjapan.jp/headlines.rss' },
     { name: 'AFP BB News', url: 'https://feeds.afpbb.com/afpbb/news/all' },
-    { name: 'Google News (国際政治)', url: 'https://news.google.com/rss/search?q=政治+(海外+OR+国際)+-高校+-大学+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+    { name: 'Reuters Japan', url: 'https://news.google.com/rss/search?q=site:jp.reuters.com+政治+OR+国際+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "国内の金融市場ニュース": [
     { name: '現代ビジネス', url: 'https://gendai.media/list/feed/rss' },
@@ -55,9 +53,10 @@ const CATEGORY_FEEDS = {
     { name: 'Google News (国内経済)', url: 'https://news.google.com/rss/search?q=国内経済+OR+日経平均+OR+金融政策+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "海外の金融市場ニュース": [
-    { name: 'CoinPost', url: 'https://coinpost.jp/feed' },
-    { name: 'Google News (海外金融)', url: 'https://news.google.com/rss/search?q=金融市場+海外+OR+米国株+OR+FRB+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'Google News (世界経済)', url: 'https://news.google.com/rss/search?q=世界経済+OR+NYダウ+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+    { name: 'The Wall Street Journal', url: 'https://news.google.com/rss/search?q=site:jp.wsj.com+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Bloomberg', url: 'https://news.google.com/rss/search?q=site:www.bloomberg.co.jp+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Reuters Japan (Business)', url: 'https://news.google.com/rss/search?q=site:jp.reuters.com+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Forbes JAPAN', url: 'https://news.google.com/rss/search?q=site:forbesjapan.com+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "AIツールやサービス": [
     { name: 'ITmedia AI+', url: 'https://rss.itmedia.co.jp/rss/2.0/aiplus.xml' },
