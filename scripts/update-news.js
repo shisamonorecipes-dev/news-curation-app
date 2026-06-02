@@ -101,13 +101,13 @@ const CATEGORY_FEEDS = {
     { name: 'ITmedia AI+', url: 'https://rss.itmedia.co.jp/rss/2.0/aiplus.xml' },
     { name: 'Ledge.ai', url: 'https://ledge.ai/feed/' },
     { name: 'AINOW', url: 'https://ainow.ai/feed/' },
-    { name: 'CNET Japan (AI)', url: 'https://news.google.com/rss/search?q=site:japan.cnet.com+AI+OR+人工知能+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'PC Watch (AI)', url: 'https://news.google.com/rss/search?q=site:pc.watch.impress.co.jp+AI+OR+人工知能+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'ASCII (AI)', url: 'https://news.google.com/rss/search?q=site:ascii.jp+AI+OR+人工知能+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: '＠IT (AI)', url: 'https://news.google.com/rss/search?q=site:atmarkit.itmedia.co.jp+AI+OR+人工知能+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'WIRED (AI)', url: 'https://news.google.com/rss/search?q=site:wired.jp+AI+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'MIT Tech Review (AI)', url: 'https://news.google.com/rss/search?q=site:technologyreview.jp+AI+OR+人工知能+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
     { name: 'IoT NEWS', url: 'https://iotnews.jp/feed' },
+    { name: 'CNET Japan', url: 'https://feeds.feedburner.com/cnet/japan' },
+    { name: 'PC Watch', url: 'https://pc.watch.impress.co.jp/data/rss/1.0/pcw/feed.rdf' },
+    { name: 'ASCII.jp', url: 'https://ascii.jp/macmac/rss.xml' },
+    { name: '＠IT', url: 'https://rss.itmedia.co.jp/rss/2.0/atmarkit.xml' },
+    { name: 'WIRED.jp', url: 'https://wired.jp/feed/rss/' },
+    { name: 'MIT Tech Review', url: 'https://www.technologyreview.jp/feed/' },
     { name: 'Google News (AI)', url: 'https://news.google.com/rss/search?q=生成AI+OR+ChatGPT+OR+AIツール+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "GAFAMに関連するニュース": [
@@ -115,11 +115,11 @@ const CATEGORY_FEEDS = {
     { name: 'ITmedia NEWS', url: 'https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml' },
     { name: 'Business Insider Japan', url: 'https://www.businessinsider.jp/feed/index.xml' },
     { name: 'WIRED.jp', url: 'https://wired.jp/feed/rss/' },
-    { name: 'CNET Japan (GAFAM)', url: 'https://news.google.com/rss/search?q=site:japan.cnet.com+Google+OR+Apple+OR+Meta+OR+Amazon+OR+Microsoft+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'Forbes (GAFAM)', url: 'https://news.google.com/rss/search?q=site:forbesjapan.com+Google+OR+Apple+OR+Meta+OR+Amazon+OR+Microsoft+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'PC Watch (GAFAM)', url: 'https://news.google.com/rss/search?q=site:pc.watch.impress.co.jp+Google+OR+Apple+OR+Meta+OR+Amazon+OR+Microsoft+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'ASCII (GAFAM)', url: 'https://news.google.com/rss/search?q=site:ascii.jp+Google+OR+Apple+OR+Meta+OR+Amazon+OR+Microsoft+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
     { name: 'ケータイWatch', url: 'https://k-tai.watch.impress.co.jp/data/rss/1.0/ktw/feed.rdf' },
+    { name: 'CNET Japan', url: 'https://feeds.feedburner.com/cnet/japan' },
+    { name: 'Forbes JAPAN', url: 'https://forbesjapan.com/feeds/rss' },
+    { name: 'PC Watch', url: 'https://pc.watch.impress.co.jp/data/rss/1.0/pcw/feed.rdf' },
+    { name: 'ASCII.jp', url: 'https://ascii.jp/macmac/rss.xml' },
     { name: 'Google News (GAFAM)', url: 'https://news.google.com/rss/search?q=Google+OR+Apple+OR+Meta+OR+Amazon+OR+Microsoft+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "広告マーケティング(広告メディア含む)": [
@@ -194,7 +194,11 @@ async function processCategory(targetCategory) {
   
   let categoryRule = '';
   if (targetCategory.includes('金融市場')) {
-    categoryRule = '4. 【カテゴリ制限】純粋な金融政策、株価動向、為替市場、企業業績、マクロ経済に関するトピックに厳しく限定してください。AIやテクノロジー主体の話題は除外してください。\n';
+    categoryRule = '4. 【カテゴリ制限】純粋な金融政策、株価動向、為替市場、企業業績、マクロ経済に関するトピックに厳格に限定してください。AIやテクノロジー主体の話題は除外してください。\n';
+  } else if (targetCategory.includes('GAFAM')) {
+    categoryRule = '4. 【カテゴリ制限】必ず「Google、Apple、Meta、Amazon、Microsoft」のいずれかの企業（またはその製品・サービス）に関するトピックに厳格に限定してください。それ以外の企業のニュースは完全に除外してください。\n';
+  } else if (targetCategory.includes('AIツール')) {
+    categoryRule = '4. 【カテゴリ制限】必ず「AI（人工知能）、機械学習、LLM、生成AIツール」などに関するトピックに厳格に限定してください。単なるスマホやPCのハードウェア発表、AIと無関係なITニュースは完全に除外してください。\n';
   } else {
     categoryRule = '4. 【カテゴリ制限】該当カテゴリに最もふさわしい、業界全体のトレンドとなる重要なニュースを選定してください。\n';
   }
