@@ -86,16 +86,16 @@ const CATEGORY_FEEDS = {
     { name: 'Google News (国内経済)', url: 'https://news.google.com/rss/search?q=国内経済+OR+日経平均+OR+金融政策+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "海外の金融市場ニュース": [
-    { name: 'The Wall Street Journal', url: 'https://news.google.com/rss/search?q=site:jp.wsj.com+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'Bloomberg', url: 'https://news.google.com/rss/search?q=site:www.bloomberg.co.jp+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'Reuters Japan', url: 'https://news.google.com/rss/search?q=site:jp.reuters.com+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'Forbes JAPAN', url: 'https://news.google.com/rss/search?q=site:forbesjapan.com+金融+OR+経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'The Wall Street Journal', url: 'https://news.google.com/rss/search?q=site:jp.wsj.com+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Bloomberg', url: 'https://news.google.com/rss/search?q=site:www.bloomberg.co.jp+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Reuters Japan', url: 'https://news.google.com/rss/search?q=site:jp.reuters.com+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
+    { name: 'Forbes JAPAN', url: 'https://news.google.com/rss/search?q=site:forbesjapan.com+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
     { name: 'CoinPost', url: 'https://coinpost.jp/feed' },
     { name: 'CoinDesk Japan', url: 'https://www.coindeskjapan.com/feed/' },
     { name: 'CoinTelegraph Japan', url: 'https://jp.cointelegraph.com/rss' },
     { name: 'MIT Tech Review', url: 'https://www.technologyreview.jp/feed/' },
     { name: 'WIRED (Economy)', url: 'https://news.google.com/rss/search?q=site:wired.jp+経済+OR+ビジネス+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
-    { name: 'Business Insider (Economy)', url: 'https://news.google.com/rss/search?q=site:businessinsider.jp+海外+OR+世界経済+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
+    { name: 'Business Insider (Economy)', url: 'https://news.google.com/rss/search?q=site:businessinsider.jp+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "AIツールやサービス": [
     { name: 'ITmedia AI+', url: 'https://rss.itmedia.co.jp/rss/2.0/aiplus.xml' },
@@ -289,6 +289,7 @@ async function main() {
     }
     
     console.log('\n✨ すべてのカテゴリのニュース更新が完了しました！');
+    process.exit(0); // ゾンビプロセスによるGitHub Actionsの6時間ハングアップを確実に防ぐための強制終了
   } catch (error) {
     console.error('\n💥 全体の処理中に予期せぬ致命的なエラーが発生しました:', error);
     process.exit(1);
