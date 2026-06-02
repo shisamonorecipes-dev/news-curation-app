@@ -199,6 +199,8 @@ async function processCategory(targetCategory) {
     categoryRule = '4. 【カテゴリ制限】必ず「Google、Apple、Meta、Amazon、Microsoft」のいずれかの企業（またはその製品・サービス）に関するトピックに厳格に限定してください。それ以外の企業のニュースは完全に除外してください。\n';
   } else if (targetCategory.includes('AIツール')) {
     categoryRule = '4. 【カテゴリ制限】必ず「AI（人工知能）、機械学習、LLM、生成AIツール」などに関するトピックに厳格に限定してください。単なるスマホやPCのハードウェア発表、AIと無関係なITニュースは完全に除外してください。\n';
+  } else if (targetCategory.includes('政治') || targetCategory.includes('海外のニュース') || targetCategory.includes('国内のニュース')) {
+    categoryRule = '4. 【カテゴリ制限】純粋な政治・国際情勢・外交・選挙・社会問題に関するトピックに厳格に限定してください。AI・テクノロジー・エンタメ・純粋な金融（株価やIPO等）の話題は完全に除外してください。\n';
   } else {
     categoryRule = '4. 【カテゴリ制限】該当カテゴリに最もふさわしい、業界全体のトレンドとなる重要なニュースを選定してください。\n';
   }
