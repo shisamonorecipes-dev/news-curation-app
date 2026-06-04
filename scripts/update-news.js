@@ -161,10 +161,8 @@ const CATEGORY_FEEDS = {
     { name: 'ASCII.jp', url: 'https://ascii.jp/macmac/rss.xml' },
     { name: 'The Verge', url: 'https://news.google.com/rss/search?q=site:theverge.com+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
     { name: 'ZDNET Japan', url: 'https://japan.zdnet.com/rss/news/index.rdf' },
-    { name: 'Macお宝鑑定団', url: 'https://news.google.com/rss/search?q=site:macotakara.jp+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
     { name: '9to5Mac', url: 'https://news.google.com/rss/search?q=site:9to5mac.com+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
     { name: '窓の杜', url: 'https://forest.watch.impress.co.jp/data/rss/1.0/for/feed.rdf' },
-    { name: 'リアルサウンド テック', url: 'https://news.google.com/rss/search?q=site:realsound.jp/tech+when:1d&hl=ja&gl=JP&ceid=JP:ja' },
     { name: 'Google News (GAFAM)', url: 'https://news.google.com/rss/search?q=Google+OR+Apple+OR+Meta+OR+Amazon+OR+Microsoft+when:1d&hl=ja&gl=JP&ceid=JP:ja' }
   ],
   "広告マーケティング(広告メディア含む)": [
@@ -243,23 +241,31 @@ async function processCategory(targetCategory) {
   
   // 金融市場（国内・海外で完全分離）
   if (targetCategory === '国内の金融市場ニュース') {
-    categoryRule = '4. 【カテゴリ制限】日本国内の金融政策（日銀等）、国内企業の業績、日経平均株価、日本国内のマクロ経済に関するトピックに厳格に限定してください。海外の金融ニュース（米国の政策や海外企業）や、AI・テクノロジー主体の話題は完全に除外してください。\n';
+    categoryRule = '4. 【カテゴリ制限】日本国内の金融政策（日銀等）、国内企業の業績、日経平均株価、日本国内のマクロ経済に関するトピックに厳格に限定してください。海外の金融ニュース、AI・テクノロジー、政治、ゲーム、広告マーケティング主体の話題は完全に除外してください。\n';
   } else if (targetCategory === '海外の金融市場ニュース') {
-    categoryRule = '4. 【カテゴリ制限】海外の金融政策（FRB等）、海外企業の業績、米国株・暗号資産、グローバルなマクロ経済に関するトピックに厳格に限定してください。日本国内の金融ニュース（日銀や日本企業）や、AI・テクノロジー主体の話題は完全に除外してください。\n';
+    categoryRule = '4. 【カテゴリ制限】海外の金融政策（FRB等）、海外企業の業績、米国株・暗号資産、グローバルなマクロ経済に関するトピックに厳格に限定してください。日本国内の金融ニュース、AI・テクノロジー、政治、ゲーム、広告マーケティング主体の話題は完全に除外してください。\n';
   } 
   // GAFAM・AIツール
   else if (targetCategory.includes('GAFAM')) {
-    categoryRule = '4. 【カテゴリ制限】必ず「Google、Apple、Meta、Amazon、Microsoft」のいずれかの企業（またはその製品・サービス）に関するトピックに厳格に限定してください。それ以外の企業のニュースは完全に除外してください。\n';
+    categoryRule = '4. 【カテゴリ制限】必ず「Google、Apple、Meta、Amazon、Microsoft」のいずれかの企業（またはその製品・サービス）を主体としたトピックに厳格に限定してください。GAFAM以外のAIツール単体のニュース、純粋な金融、政治、ゲーム、広告マーケティングの話題は完全に除外してください。\n';
   } else if (targetCategory.includes('AIツール')) {
-    categoryRule = '4. 【カテゴリ制限】必ず「AI（人工知能）、機械学習、LLM、生成AIツール」などに関するトピックに厳格に限定してください。単なるスマホやPCのハードウェア発表、AIと無関係なITニュースは完全に除外してください。\n';
+    categoryRule = '4. 【カテゴリ制限】必ず「AI（人工知能）、機械学習、LLM、生成AIツール」の技術やサービスに関するトピックに厳格に限定してください。AIと無関係なスマホやPCのハードウェア発表、純粋な金融、政治、ゲーム、広告マーケティングの話題は完全に除外してください。\n';
   } 
   // 政治・一般ニュース（国内・海外で完全分離）
   else if (targetCategory === '国内のニュース(政治)') {
-    categoryRule = '4. 【カテゴリ制限】日本国内の政治、政策、選挙、日本国内の社会問題に関するトピックに厳格に限定してください。海外の政治・国際情勢、AI・テクノロジー・エンタメ・純粋な金融（株価等）の話題は完全に除外してください。\n';
+    categoryRule = '4. 【カテゴリ制限】日本国内の政治、政策、選挙、日本国内の社会問題に関するトピックに厳格に限定してください。海外の政治・国際情勢、AI・テクノロジー・エンタメ・ゲーム・純粋な金融・広告マーケティングの話題は完全に除外してください。\n';
   } else if (targetCategory === '海外のニュース(政治)') {
-    categoryRule = '4. 【カテゴリ制限】海外の政治、国際情勢、外交、海外の選挙や社会問題に関するトピックに厳格に限定してください。日本国内の政治や社会問題、AI・テクノロジー・エンタメ・純粋な金融（株価等）の話題は完全に除外してください。\n';
+    categoryRule = '4. 【カテゴリ制限】海外の政治、国際情勢、外交、海外の選挙や社会問題に関するトピックに厳格に限定してください。日本国内の政治や社会問題、AI・テクノロジー・エンタメ・ゲーム・純粋な金融・広告マーケティングの話題は完全に除外してください。\n';
   } 
-  // その他（ゲーム、広告マーケティングなど）
+  // 広告マーケティング
+  else if (targetCategory.includes('広告マーケティング')) {
+    categoryRule = '4. 【カテゴリ制限】広告、マーケティング、PR、デジタルマーケティングに関するトピックに厳格に限定してください。純粋な金融、政治、ゲーム、単なるAIツールの発表（マーケティング活用を含まないもの）は完全に除外してください。\n';
+  }
+  // ゲーム
+  else if (targetCategory.includes('ゲーム')) {
+    categoryRule = '4. 【カテゴリ制限】ゲーム業界、新作ゲーム、eスポーツに関するトピックに厳格に限定してください。純粋な金融、政治、一般的なAIツール、広告マーケティングの話題は完全に除外してください。\n';
+  }
+  // その他
   else {
     categoryRule = '4. 【カテゴリ制限】該当カテゴリに最もふさわしい、業界全体のトレンドとなる重要なニュースを選定してください。\n';
   }
