@@ -17,10 +17,22 @@ const parser = new Parser({
 // 安全なタイムアウト付き取得関数
 async function fetchFeedWithTimeout(url, timeoutMs = 15000) {
   const fetchPromise = parser.parseURL(url);
+  let timeoutId;
   const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => reject(new Error(`RSS fetch timeout exceeded ${timeoutMs}ms`)), timeoutMs);
+    timeoutId = setTimeout(() => reject(new Error(`RSS fetch timeout exceeded ${timeoutMs}ms`)), timeoutMs);
   });
-  return Promise.race([fetchPromise, timeoutPromise]);
+  
+  try {
+    const result = await Promise.race([fetchPromise, timeoutPromise]);
+    clearTimeout(timeoutId);
+    return result;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    // タイムアウト後にバックグラウンドの取得がエラー終了した際、
+    // UnhandledPromiseRejectionでプロセスがクラッシュ(exit code 1)するのを防ぐ
+    fetchPromise.catch(() => {});
+    throw error;
+  }
 }
 
 // Supabaseクライアントの初期化
