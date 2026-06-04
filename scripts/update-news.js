@@ -205,15 +205,27 @@ async function processCategory(targetCategory) {
   console.log('🔄 2. AI(Gemini)に分析・要約を依頼中...');
   
   let categoryRule = '';
-  if (targetCategory.includes('金融市場')) {
-    categoryRule = '4. 【カテゴリ制限】純粋な金融政策、株価動向、為替市場、企業業績、マクロ経済に関するトピックに厳格に限定してください。AIやテクノロジー主体の話題は除外してください。\n';
-  } else if (targetCategory.includes('GAFAM')) {
+  
+  // 金融市場（国内・海外で完全分離）
+  if (targetCategory === '国内の金融市場ニュース') {
+    categoryRule = '4. 【カテゴリ制限】日本国内の金融政策（日銀等）、国内企業の業績、日経平均株価、日本国内のマクロ経済に関するトピックに厳格に限定してください。海外の金融ニュース（米国の政策や海外企業）や、AI・テクノロジー主体の話題は完全に除外してください。\n';
+  } else if (targetCategory === '海外の金融市場ニュース') {
+    categoryRule = '4. 【カテゴリ制限】海外の金融政策（FRB等）、海外企業の業績、米国株・暗号資産、グローバルなマクロ経済に関するトピックに厳格に限定してください。日本国内の金融ニュース（日銀や日本企業）や、AI・テクノロジー主体の話題は完全に除外してください。\n';
+  } 
+  // GAFAM・AIツール
+  else if (targetCategory.includes('GAFAM')) {
     categoryRule = '4. 【カテゴリ制限】必ず「Google、Apple、Meta、Amazon、Microsoft」のいずれかの企業（またはその製品・サービス）に関するトピックに厳格に限定してください。それ以外の企業のニュースは完全に除外してください。\n';
   } else if (targetCategory.includes('AIツール')) {
     categoryRule = '4. 【カテゴリ制限】必ず「AI（人工知能）、機械学習、LLM、生成AIツール」などに関するトピックに厳格に限定してください。単なるスマホやPCのハードウェア発表、AIと無関係なITニュースは完全に除外してください。\n';
-  } else if (targetCategory.includes('政治') || targetCategory.includes('海外のニュース') || targetCategory.includes('国内のニュース')) {
-    categoryRule = '4. 【カテゴリ制限】純粋な政治・国際情勢・外交・選挙・社会問題に関するトピックに厳格に限定してください。AI・テクノロジー・エンタメ・純粋な金融（株価やIPO等）の話題は完全に除外してください。\n';
-  } else {
+  } 
+  // 政治・一般ニュース（国内・海外で完全分離）
+  else if (targetCategory === '国内のニュース(政治)') {
+    categoryRule = '4. 【カテゴリ制限】日本国内の政治、政策、選挙、日本国内の社会問題に関するトピックに厳格に限定してください。海外の政治・国際情勢、AI・テクノロジー・エンタメ・純粋な金融（株価等）の話題は完全に除外してください。\n';
+  } else if (targetCategory === '海外のニュース(政治)') {
+    categoryRule = '4. 【カテゴリ制限】海外の政治、国際情勢、外交、海外の選挙や社会問題に関するトピックに厳格に限定してください。日本国内の政治や社会問題、AI・テクノロジー・エンタメ・純粋な金融（株価等）の話題は完全に除外してください。\n';
+  } 
+  // その他（ゲーム、広告マーケティングなど）
+  else {
     categoryRule = '4. 【カテゴリ制限】該当カテゴリに最もふさわしい、業界全体のトレンドとなる重要なニュースを選定してください。\n';
   }
 
