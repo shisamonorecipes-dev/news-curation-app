@@ -16,23 +16,31 @@ const parser = new Parser({
 
 // 安全なタイムアウト付き取得関数
 async function fetchFeedWithTimeout(url, timeoutMs = 15000) {
-  const fetchPromise = parser.parseURL(url);
-  let timeoutId;
+  let isResolved = false;
+
+  // Promise生成直後にcatchを繋ぐことで、後からのエラーによる強制終了を完全に防ぐ
+  const fetchPromise = parser.parseURL(url)
+    .then(result => {
+      isResolved = true;
+      return result;
+    })
+    .catch(err => {
+      // 既にタイムアウト等で決着がついていれば、遅れてきたエラーは完全に無視（握りつぶす）
+      if (isResolved) return;
+      isResolved = true;
+      throw err;
+    });
+
   const timeoutPromise = new Promise((_, reject) => {
-    timeoutId = setTimeout(() => reject(new Error(`RSS fetch timeout exceeded ${timeoutMs}ms`)), timeoutMs);
+    setTimeout(() => {
+      if (!isResolved) {
+        isResolved = true;
+        reject(new Error(`RSS fetch timeout exceeded ${timeoutMs}ms`));
+      }
+    }, timeoutMs);
   });
-  
-  try {
-    const result = await Promise.race([fetchPromise, timeoutPromise]);
-    clearTimeout(timeoutId);
-    return result;
-  } catch (error) {
-    clearTimeout(timeoutId);
-    // タイムアウト後にバックグラウンドの取得がエラー終了した際、
-    // UnhandledPromiseRejectionでプロセスがクラッシュ(exit code 1)するのを防ぐ
-    fetchPromise.catch(() => {});
-    throw error;
-  }
+
+  return Promise.race([fetchPromise, timeoutPromise]);
 }
 
 // Supabaseクライアントの初期化
@@ -245,11 +253,11 @@ async function processCategory(targetCategory) {
   } else if (targetCategory === '海外の金融市場ニュース') {
     categoryRule = '4. 【カテゴリ制限】海外の金融政策（FRB等）、海外企業の業績、米国株・暗号資産、グローバルなマクロ経済に関するトピックに厳格に限定してください。日本国内の金融ニュース、AI・テクノロジー、政治、ゲーム、広告マーケティング主体の話題は完全に除外してください。\n';
   } 
-  // GAFAM・AIツール
+  // GAFAM・AIツール（相互の重複を完全排除）
   else if (targetCategory.includes('GAFAM')) {
-    categoryRule = '4. 【カテゴリ制限】必ず「Google、Apple、Meta、Amazon、Microsoft」のいずれかの企業（またはその製品・サービス）を主体としたトピックに厳格に限定してください。GAFAM以外のAIツール単体のニュース、純粋な金融、政治、ゲーム、広告マーケティングの話題は完全に除外してください。\n';
+    categoryRule = '4. 【カテゴリ制限】「Google、Apple、Meta、Amazon、Microsoft」の企業動向、ビジネス戦略、ハードウェア製品（スマホ等）に関するトピックに厳格に限定してください。【超重要】同じGoogleやMicrosoftでも、「Gemini」や「Copilot」「ChatGPT」など【生成AIツールに関するニュースは完全に除外】してください（それらはAIカテゴリの担当です）。純粋な金融、政治、ゲーム、広告マーケの話題も完全に除外してください。\n';
   } else if (targetCategory.includes('AIツール')) {
-    categoryRule = '4. 【カテゴリ制限】必ず「AI（人工知能）、機械学習、LLM、生成AIツール」の技術やサービスに関するトピックに厳格に限定してください。AIと無関係なスマホやPCのハードウェア発表、純粋な金融、政治、ゲーム、広告マーケティングの話題は完全に除外してください。\n';
+    categoryRule = '4. 【カテゴリ制限】「AI（人工知能）、機械学習、LLM、生成AIツール（Gemini, Copilot, ChatGPT等）」の技術やサービスに関するトピックに厳格に限定してください。GoogleやMicrosoftのニュースであっても、AIに関連するものであれば積極的に取り上げてください。AIと無関係なスマホ等のハードウェア発表、純粋な金融、政治、ゲーム、広告マーケの話題は完全に除外してください。\n';
   } 
   // 政治・一般ニュース（国内・海外で完全分離）
   else if (targetCategory === '国内のニュース(政治)') {
