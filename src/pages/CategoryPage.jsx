@@ -175,9 +175,27 @@ export default function CategoryPage() {
     </article>
   );
 
-  // 記事の分類（直近1回分=5件を「最新」、それ以降を「過去」）
-  const latestArticles = articles.slice(0, 5).sort((a, b) => b.score - a.score);
-  const pastArticles = articles.slice(5);
+  // 記事の分類（最新の更新タイミングで作られたバッチのみを「最新」、それ以前を「過去」とする）
+  let latestArticles = [];
+  let pastArticles = [];
+  
+  if (articles.length > 0) {
+    // 一番新しい記事の作成日時を基準にする
+    const latestDate = new Date(articles[0].created_at);
+    // 基準から1時間以内に作られたものを「同じ最新のバッチ」とみなす
+    const oneHour = 60 * 60 * 1000;
+    
+    latestArticles = articles.filter(article => {
+      const articleDate = new Date(article.created_at);
+      return (latestDate.getTime() - articleDate.getTime()) < oneHour;
+    });
+    
+    // 最新バッチ以外は過去記事とする
+    pastArticles = articles.slice(latestArticles.length);
+    
+    // 最新記事はスコア順にソートして表示
+    latestArticles.sort((a, b) => b.score - a.score);
+  }
 
   const archiveTree = {};
   pastArticles.forEach(article => {
