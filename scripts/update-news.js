@@ -3,6 +3,15 @@ import Parser from 'rss-parser';
 import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
 
+// Node.jsのプロセス全体を守る絶対的な安全装置（どんなエラーでも強制終了させない）
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('⚠️ [Global] 未処理のPromiseエラーを検知しましたが、プロセスを継続します:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('⚠️ [Global] 予期せぬ例外を検知しましたが、プロセスを継続します:', error);
+});
+
 // .envファイルを読み込む
 dotenv.config();
 
