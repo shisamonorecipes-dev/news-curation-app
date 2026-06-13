@@ -121,59 +121,69 @@ export default function CategoryPage() {
     }
   };
 
-  const renderArticle = (article) => (
-    <article key={article.id} className="article-card glass-panel">
-      <div className="card-header">
-        <div className="meta">
-          <div className="meta-item">
-            <Clock size={14} />
-            <span>{getRelativeTime(article.created_at)}</span>
+  const renderArticle = (article) => {
+    const isEmptyRecord = article.title === "この時間帯は目立った記事がありませんでした。";
+
+    return (
+      <article key={article.id} className="article-card glass-panel" style={isEmptyRecord ? { textAlign: 'center', padding: '3rem 2rem' } : {}}>
+        {!isEmptyRecord && (
+          <div className="card-header">
+            <div className="meta">
+              <div className="meta-item">
+                <Clock size={14} />
+                <span>{getRelativeTime(article.created_at)}</span>
+              </div>
+              <span className="source-badge">{article.source_count}サイトで話題</span>
+            </div>
+            <div className="score">
+              <Flame size={14} /> {article.score}
+            </div>
           </div>
-          <span className="source-badge">{article.source_count}サイトで話題</span>
-        </div>
-        <div className="score">
-          <Flame size={14} /> {article.score}
-        </div>
-      </div>
+        )}
 
-      <h3 className="article-title">{article.title}</h3>
-      
-      <div className="reference-links">
-        <span className="ref-label">参考元:</span>
-        {Array.isArray(article.links) && article.links.map((link, i) => (
-          <a key={i} href={link.url} className="ref-link" target="_blank" rel="noopener noreferrer">
-            <ExternalLink size={12} /> {link.name}
-          </a>
-        ))}
-      </div>
+        <h3 className="article-title" style={isEmptyRecord ? { color: 'var(--text-muted)', marginBottom: '1rem' } : {}}>{article.title}</h3>
+        
+        {!isEmptyRecord && (
+          <div className="reference-links">
+            <span className="ref-label">参考元:</span>
+            {Array.isArray(article.links) && article.links.map((link, i) => (
+              <a key={i} href={link.url} className="ref-link" target="_blank" rel="noopener noreferrer">
+                <ExternalLink size={12} /> {link.name}
+              </a>
+            ))}
+          </div>
+        )}
 
-      <p className="article-summary">{article.summary}</p>
+        <p className="article-summary">{article.summary}</p>
 
-      <div className="card-actions">
-        <div className="play-controls">
-          <button 
-            className={`play-btn ${playingId === article.id ? 'playing' : ''}`}
-            onClick={() => togglePlay(article.id, article.summary)}
-          >
-            {playingId === article.id ? <Pause size={18} /> : <Play size={18} />}
-            <span>{playingId === article.id ? '停止' : '読み上げ'}</span>
-          </button>
-          
-          <select 
-            className="rate-select small" 
-            value={playbackRate} 
-            onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
-            title="再生速度"
-          >
-            <option value={1.0}>1.0x</option>
-            <option value={1.25}>1.25x</option>
-            <option value={1.5}>1.5x</option>
-            <option value={2.0}>2.0x</option>
-          </select>
-        </div>
-      </div>
-    </article>
-  );
+        {!isEmptyRecord && (
+          <div className="card-actions">
+            <div className="play-controls">
+              <button 
+                className={`play-btn ${playingId === article.id ? 'playing' : ''}`}
+                onClick={() => togglePlay(article.id, article.summary)}
+              >
+                {playingId === article.id ? <Pause size={18} /> : <Play size={18} />}
+                <span>{playingId === article.id ? '停止' : '読み上げ'}</span>
+              </button>
+              
+              <select 
+                className="rate-select small" 
+                value={playbackRate} 
+                onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
+                title="再生速度"
+              >
+                <option value={1.0}>1.0x</option>
+                <option value={1.25}>1.25x</option>
+                <option value={1.5}>1.5x</option>
+                <option value={2.0}>2.0x</option>
+              </select>
+            </div>
+          </div>
+        )}
+      </article>
+    );
+  };
 
   // 記事の分類（最新の更新タイミングで作られたバッチのみを「最新」、それ以前を「過去」とする）
   let latestArticles = [];
@@ -243,8 +253,17 @@ export default function CategoryPage() {
           <div className="view-latest">
             <section className="trending-section">
               <div className="section-header">
-                <Flame className="icon-flame" />
-                <h2>Trending Now</h2>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Flame className="icon-flame" />
+                    <h2>Trending Now</h2>
+                  </div>
+                  {latestArticles.length > 0 && (
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px', marginLeft: '2px' }}>
+                      {new Date(latestArticles[0].created_at).toLocaleString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' })} の記事
+                    </p>
+                  )}
+                </div>
                 <div className="controls-right" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <select 
                     className="rate-select small" 
