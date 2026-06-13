@@ -122,7 +122,7 @@ export default function CategoryPage() {
   };
 
   const renderArticle = (article) => {
-    const isEmptyRecord = article.title === "この時間帯は目立った記事がありませんでした。";
+    const isEmptyRecord = article.title === "この時間帯は目立った記事がありませんでした。" || article.title === "現在、AIサーバーが大変混み合っています。";
 
     return (
       <article key={article.id} className="article-card glass-panel" style={isEmptyRecord ? { textAlign: 'center', padding: '3rem 2rem' } : {}}>
