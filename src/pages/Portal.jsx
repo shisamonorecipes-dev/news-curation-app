@@ -63,7 +63,7 @@ export default function Portal() {
         </h3>
         <div style={{ marginBottom: '1.5rem' }}>
           <h4 style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', fontSize: '0.95rem', fontWeight: '600' }}>🕒 ニュースの更新時間</h4>
-          <p style={{ margin: 0 }}>毎日、日本時間の 0:00, 6:00, 12:00, 18:00 頃にAIが自動で最新ニュースを収集・要約しています。<br/><span style={{ fontSize: '0.85rem', opacity: 0.8 }}>※システムの順番待ち状況により、数十分〜数時間ほど遅れる場合があります。</span></p>
+          <p style={{ margin: 0 }}>毎日、日本時間の 6:00 と 18:00 頃にAIが自動で最新ニュースを収集・要約しています。<br/><span style={{ fontSize: '0.85rem', opacity: 0.8 }}>※システムの順番待ち状況により、数十分〜数時間ほど遅れる場合があります。</span></p>
         </div>
         <div>
           <h4 style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', fontSize: '0.95rem', fontWeight: '600' }}>🤖 記事の選定ロジック</h4>
