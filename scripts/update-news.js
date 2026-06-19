@@ -237,8 +237,8 @@ async function processCategory(targetCategory) {
       const safeUrl = encodeURI(feed.url);
       const data = await fetchFeedWithTimeout(safeUrl, 15000);
       
-      // 万が一の巨大RSSに備え、一旦50件でスライスしてから日付判定
-      const recentItems = data.items.slice(0, 50);
+      // 万が一の巨大RSSに備え、一旦25件でスライスしてから日付判定
+      const recentItems = data.items.slice(0, 25);
       let addedCount = 0;
 
       recentItems.forEach(item => {
@@ -317,7 +317,7 @@ ${articles.map((a, i) => `[${i}] ${a.title} (Source: ${a.source}, Link: ${a.link
 1. 記事リストから、同じ内容やトピックを扱っている記事をグループ化してください。
 2. グループ化されたトピックを取り上げているメディアの数を「話題性（sourceCount）」としてカウントしてください。
 3. 【超重要】必ず「2つ以上の異なる情報源（メディア）」で取り上げられているトピックのみを選定してください。1つのサイトでしか報じられていない独自のニュースや、株価・為替の定期的な速報などの機械的なデータは【絶対に】除外してください。
-${categoryRule}5. 話題性のスコアが高い上位5つのトピックを選定してください。（※もし2メディア以上で重複している話題が5つ未満の場合は、該当する数だけ出力し、無理に5つ選ばないでください）
+${categoryRule}5. 話題性のスコアが高い上位3つのトピックを選定してください。（※もし2メディア以上で重複している話題が3つ未満の場合は、該当する数だけ出力し、無理に3つ選ばないでください）
 6. 各トピックについて、具体的な固有名詞を含め、150〜200文字程度のニュースサマリーを作成してください。
 7. 必ず以下のJSON形式の配列でのみ出力してください。マークダウン（\`\`\`json）は含めず、純粋なJSONテキストのみを返してください。
 
