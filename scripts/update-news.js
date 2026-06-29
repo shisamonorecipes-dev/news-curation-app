@@ -431,10 +431,10 @@ async function main() {
       const category = categories[i];
       await processCategory(category);
       
-      // APIレートリミット対策として、次のカテゴリ実行前に3秒待機する（最後以外）
+      // APIレートリミット対策として、次のカテゴリ実行前に15秒待機する（最後以外）
       if (i < categories.length - 1) {
-        console.log('⏳ APIの制限を避けるため、3秒待機します...\n');
-        await sleep(3000);
+        console.log('⏳ APIの制限(429エラー)を避けるため、15秒待機します...\n');
+        await sleep(15000);
       }
     }
     
