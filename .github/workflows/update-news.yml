@@ -1,5 +1,5 @@
 name: Update News Automatically
-
+# Note: Modifying this workflow file resets the 60-day inactivity disable rule.
 on:
   schedule:
     # 毎日 日本時間の 6:17 と 18:17 (UTC: 21:17, 09:17)
