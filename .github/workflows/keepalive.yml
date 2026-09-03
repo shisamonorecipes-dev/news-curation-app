@@ -1,0 +1,21 @@
+name: Keepalive Workflow
+
+on:
+  schedule:
+    # 毎月1日の UTC 00:00 (JST 09:00) に自動実行
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Keepalive commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore: automated keepalive commit to prevent workflow suspension"
+          git push
